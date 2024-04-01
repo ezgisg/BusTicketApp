@@ -22,7 +22,14 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     let seatProportion: CGFloat = 2
     var infoLabel = UILabel()
     var buyButton = UIButton()
-    var seatStatus = [selectedSeatsDetail(gender: .male, seatNumber: 1), selectedSeatsDetail(gender: .male, seatNumber: 2),  selectedSeatsDetail(gender: .empty, seatNumber: 3), selectedSeatsDetail(gender: .female, seatNumber: 4), selectedSeatsDetail(gender: .female, seatNumber: 5) ]
+    var seatStatus = [
+        SelectedSeatsDetail(gender: .male, seatNumber: 1),
+        SelectedSeatsDetail(gender: .male, seatNumber: 2),
+        SelectedSeatsDetail(gender: .empty, seatNumber: 3),
+        SelectedSeatsDetail(gender: .female, seatNumber: 4),
+        SelectedSeatsDetail(gender: .female, seatNumber: 5),
+        SelectedSeatsDetail(gender: .female, seatNumber: 38)
+    ]
     
     enum SectionKind: Int, CaseIterable {
         case first
@@ -48,32 +55,34 @@ class ViewController: UIViewController, UICollectionViewDelegate {
                 return 1
             case .third:
                 return 13
-            
+                
             }
         }
-   
+        
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
-        for seatNumber in 6...45 {
-            seatStatus.append(selectedSeatsDetail(gender: .empty, seatNumber: seatNumber))
-        }
-      
+        
+        fillSeatStatus()
         
         let collectionViewHeight = view.bounds.height * screenHeightRatio
-        let collectionViewFrame = CGRect(x: Int(screenWidthSpace) / 2 , y: Int(view.bounds.height * 0.85 - collectionViewHeight) , width: Int(screenWidth) - Int(screenWidthSpace), height: Int(collectionViewHeight))
+        let collectionViewFrame = CGRect(
+            x: Int(screenWidthSpace) / 2 ,
+            y: Int(view.bounds.height * 0.85 - collectionViewHeight) ,
+            width: Int(screenWidth) - Int(screenWidthSpace),
+            height: Int(collectionViewHeight)
+        )
         collectionView = UICollectionView(frame: collectionViewFrame, collectionViewLayout: createCompositionalLayout())
         collectionView.layer.cornerRadius = 5
         collectionView.backgroundColor = .systemGray6
         collectionView.isScrollEnabled = false
         collectionView.delegate = self
         view.addSubview(collectionView)
-//        changeSeats()
-//        collectionView.reloadData()
-
+        //        changeSeats(seatStatus: seatStatus)
+        //        changeSeats()
+        //        collectionView.reloadData()
+        
         let infoLabelFrame = CGRect(x: 0 , y: Int(view.bounds.height * 0.05), width: Int(screenWidth), height: Int(view.bounds.height * 0.10))
         infoLabel = UILabel(frame: infoLabelFrame)
         infoLabel.textAlignment = .center
@@ -92,12 +101,12 @@ class ViewController: UIViewController, UICollectionViewDelegate {
         collectionView.register(SingleCell.self, forCellWithReuseIdentifier: SingleCell.reuseIdentifier)
         createDataSource()
         reloadData()
-     
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        changeSeats(seatStatus: seatStatus)
+        changeSeats()
     }
     
     func createCompositionalLayout() -> UICollectionViewLayout {
@@ -196,7 +205,7 @@ class ViewController: UIViewController, UICollectionViewDelegate {
                 return self.configure(SingleCell.self, with: itemIdentifier, for: indexPath)
             }
         })
-
+        
     }
     
     func reloadData() {
@@ -217,23 +226,21 @@ class ViewController: UIViewController, UICollectionViewDelegate {
         cell.configure(with: seat)
         return cell
     }
- 
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let cell = collectionView.cellForItem(at: indexPath) as? SingleCell
         if let image = cell?.seatView.image , image == UIImage(named: "blueSelected") || image == UIImage(named: "pinkSelected")  {
-             cell?.seatView.image = UIImage(named: "whiteseat")
+            cell?.seatView.image = UIImage(named: "whiteseat")
         } else {
             let genderAlert = UIAlertController(title: "Gender Warning", message: "You cant select opposite gender", preferredStyle: .alert)
             let okButton = UIAlertAction(title: "Ok", style: .cancel)
             genderAlert.addAction(okButton)
-        
+            
             let section = sections[indexPath.section]
             let nextSeatNumber = section.seats[indexPath.item].nextSeatNumber
             let nextToSelectedSeat = self.seatStatus.first(where: { $0.seatNumber == nextSeatNumber })
-          
-        
-       
+            
             let alert = UIAlertController(title: "Select Gender", message: "Please select passenger gender:", preferredStyle: .alert)
             let buttonM = UIAlertAction(title: Gender.male.toString() , style: .default, handler: { _ in
                 if (nextToSelectedSeat?.gender.toString() ?? "Empty") == Gender.female.toString() {
@@ -241,7 +248,7 @@ class ViewController: UIViewController, UICollectionViewDelegate {
                 } else {
                     cell?.seatView.image = UIImage(named: "blueSelected")
                 }
-
+                
             })
             let buttonF = UIAlertAction(title: Gender.female.toString() , style: .default, handler: { _ in
                 if (nextToSelectedSeat?.gender.toString() ?? "Empty") == Gender.male.toString() {
@@ -255,22 +262,30 @@ class ViewController: UIViewController, UICollectionViewDelegate {
             self.present(alert, animated: true, completion: nil)
         }
     }
-    
-    private func changeSeats(seatStatus: [selectedSeatsDetail]) {
-        for (sectionIndex, section) in sections.enumerated() {
-            for (seatIndex, seats) in section.seats.enumerated() {
+}
+ 
+// MARK: - Helpers
+private extension ViewController {
+    final func changeSeats() {
+        sections.enumerated().forEach { sectionIndex, section in
+            section.seats.enumerated().forEach { seatIndex, seats in
                 let cell = collectionView.cellForItem(at: [sectionIndex,seatIndex]) as? SingleCell
-                for seat in seatStatus {
-                    if seat.seatNumber == seats.seatNumber {
-                        let (image, bool) = seat.determineSeatStatus()
-                            cell?.seatView.image = image
-                            cell?.isUserInteractionEnabled = bool
-                    }
+                seatStatus.forEach { seat in
+                    guard seat.seatNumber == seats.seatNumber else { return }
+                    let (image, bool) = seat.determineSeatStatus()
+                    cell?.seatView.image = image
+                    cell?.isUserInteractionEnabled = bool
                 }
             }
         }
     }
-   
     
-    
+    final func fillSeatStatus() {
+        let existedNumbers = seatStatus.map { $0.seatNumber }
+        let numbers = Array(1...45)
+        numbers.forEach { seatNumber in
+            guard !existedNumbers.contains(seatNumber) else { return }
+            seatStatus.append(SelectedSeatsDetail(gender: .empty, seatNumber: seatNumber))
+        }
+    }
 }

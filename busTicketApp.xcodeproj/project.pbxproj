@@ -22,7 +22,6 @@
 		ABCEC0312BB56B040061C9CD /* SingleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCEC0302BB56B040061C9CD /* SingleCell.swift */; };
 		ABCEC0332BB57A7C0061C9CD /* dataSeats.json in Resources */ = {isa = PBXBuildFile; fileRef = ABCEC0322BB57A7C0061C9CD /* dataSeats.json */; };
 		ABCEC0362BB5B0CE0061C9CD /* Empty.json in Resources */ = {isa = PBXBuildFile; fileRef = ABCEC0352BB5B0CE0061C9CD /* Empty.json */; };
-		ABCEC03A2BB6B1C50061C9CD /* ozankodlar.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCEC0392BB6B1C50061C9CD /* ozankodlar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,7 +42,6 @@
 		ABCEC0302BB56B040061C9CD /* SingleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleCell.swift; sourceTree = "<group>"; };
 		ABCEC0322BB57A7C0061C9CD /* dataSeats.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = dataSeats.json; sourceTree = "<group>"; };
 		ABCEC0352BB5B0CE0061C9CD /* Empty.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Empty.json; sourceTree = "<group>"; };
-		ABCEC0392BB6B1C50061C9CD /* ozankodlar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ozankodlar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,7 +95,6 @@
 			isa = PBXGroup;
 			children = (
 				ABCEC01B2BB545F00061C9CD /* Classes.swift */,
-				ABCEC0392BB6B1C50061C9CD /* ozankodlar.swift */,
 			);
 			path = Class;
 			sourceTree = "<group>";
@@ -217,7 +214,6 @@
 				ABCEC02D2BB56A560061C9CD /* Bundle + Extension.swift in Sources */,
 				ABCEC0282BB567F80061C9CD /* Section.swift in Sources */,
 				ABCEC01C2BB545F00061C9CD /* Classes.swift in Sources */,
-				ABCEC03A2BB6B1C50061C9CD /* ozankodlar.swift in Sources */,
 				ABCEC0252BB5675F0061C9CD /* seatProtocol.swift in Sources */,
 				ABCEC02A2BB568030061C9CD /* Seats.swift in Sources */,
 				ABCEC0042BB540B00061C9CD /* SceneDelegate.swift in Sources */,

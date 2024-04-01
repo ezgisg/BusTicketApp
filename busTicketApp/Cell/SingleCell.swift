@@ -21,8 +21,8 @@ class SingleCell: UICollectionViewCell, seatProtocol {
         
         seatView.addSubview(seatNumLabel)
         seatNumLabel.textAlignment = .center
-
-        seatNumLabel.textColor = .label
+        seatNumLabel.textColor = .black
+        seatNumLabel.adjustsFontSizeToFitWidth = true
         contentView.addSubview(seatView)
    
         
@@ -32,9 +32,7 @@ class SingleCell: UICollectionViewCell, seatProtocol {
             seatView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             seatView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             seatView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            seatView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-   
-            
+            seatView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
             ])
         
     }
@@ -44,10 +42,10 @@ class SingleCell: UICollectionViewCell, seatProtocol {
     }
     
     func configure(with seats: Seats?) {
-//        seatView.image = UIImage(named: "whiteseat")
-        seatNumLabel.text = String(seats?.seatNumber ?? 0)
-    
+
+        let seatNumberText = String(seats?.seatNumber ?? 0)
+        seatNumLabel.text = seatNumberText
+     
+        
     }
-    
-    
 }

@@ -57,7 +57,7 @@
           },
           {
               "seatNumber": 38,
-              "nextSeatNumber": 0
+              "nextSeatNumber": 41
           }
         ]
       },
@@ -68,7 +68,7 @@
         "seats": [
           {
               "seatNumber": 41,
-              "nextSeatNumber": 0
+              "nextSeatNumber": 38
           }
           
         ]

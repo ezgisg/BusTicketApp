@@ -25,18 +25,18 @@ class Passengers {
         self.fromtoDirection = fromtoDirection
     }
     
-
+    
     func isSeatAvailable(selectedSeats: selectedSeats, newPassengers: Passengers) -> Bool {
         
         
         for seatNum in seatArray {
-                  if selectedSeats.selectedSeats.contains(where: { $0.seatNumber == seatNum }) {
-                      return false
-                  }
-              }
-              return true
-          }
-  
+            if selectedSeats.selectedSeats.contains(where: { $0.seatNumber == seatNum }) {
+                return false
+            }
+        }
+        return true
+    }
+    
     func reservation() -> Bool {
         if (seatArray.count > 5) {
             return false
@@ -50,8 +50,8 @@ class Passengers {
         
     }
     
-func printTicket() {
-    for i in 1 ... seatNum {
+    func printTicket() {
+        for i in 1 ... seatNum {
             print("passenger info: \(passenger[i].id)-\(passenger[i].surname)-\(passenger[i].name) - direction: from \(fromtoDirection.initialPoint) to \(fromtoDirection.finishPoint) - seat num: \(seatArray[i]) - date: \(hour.minute) : \(hour.hour) \(date.day)/\(date.month)/\(date.year)")
         }
     }
@@ -101,21 +101,20 @@ class Direction {
     init(initialPoint: String, finishPoint: String) {
         self.initialPoint = initialPoint
         self.finishPoint = finishPoint
-    
+        
     }
 }
 
 class selectedSeats {
+    var selectedSeats : [SelectedSeatsDetail]
     
-    var selectedSeats : [selectedSeatsDetail]
-    
-    init(selectedSeats: [selectedSeatsDetail]) {
+    init(selectedSeats: [SelectedSeatsDetail]) {
         self.selectedSeats = selectedSeats
     }
     
 }
 
-class selectedSeatsDetail {
+class SelectedSeatsDetail {
     var gender: Gender
     var seatNumber: Int
     
@@ -136,35 +135,36 @@ class selectedSeatsDetail {
     }
     
 }
-    class voyage {
-        var direction : [Direction]
-        var seatsStatus: [selectedSeatsDetail]
-        var voyageDate: [Date]
-        var voyageHour: [Hour]
-        
-        init(direction: [Direction], seatsStatus: [selectedSeatsDetail], voyageDate: [Date], voyageHour: [Hour]) {
-            self.direction = direction
-            self.seatsStatus = seatsStatus
-            self.voyageDate = voyageDate
-            self.voyageHour = voyageHour
-        }
-        
+
+class Voyage {
+    var direction : [Direction]
+    var seatsStatus: [SelectedSeatsDetail]
+    var voyageDate: [Date]
+    var voyageHour: [Hour]
+    
+    init(direction: [Direction], seatsStatus: [SelectedSeatsDetail], voyageDate: [Date], voyageHour: [Hour]) {
+        self.direction = direction
+        self.seatsStatus = seatsStatus
+        self.voyageDate = voyageDate
+        self.voyageHour = voyageHour
     }
     
-    enum Gender {
-        case male
-        case female
-        case empty
-        
-        func toString() -> String {
-            switch self {
-            case .male:
-                return "Male"
-            case .female:
-                return "Female"
-            default:
-                return "Empty"
-            }
+}
+
+enum Gender {
+    case male
+    case female
+    case empty
+    
+    func toString() -> String {
+        switch self {
+        case .male:
+            return "Male"
+        case .female:
+            return "Female"
+        default:
+            return "Empty"
         }
     }
+}
 
