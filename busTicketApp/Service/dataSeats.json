@@ -1,0 +1,202 @@
+[
+    {
+        "section": 1,
+        "type": "first",
+        "seats": [
+          {
+              "seatNumber": 1,
+              "nextSeatNumber": 0
+          },
+          {
+              "seatNumber": 4,
+              "nextSeatNumber": 0
+          },
+          {
+              "seatNumber": 7,
+              "nextSeatNumber": 0
+          },
+          {
+              "seatNumber": 10,
+              "nextSeatNumber": 0
+          },
+          {
+              "seatNumber": 13,
+              "nextSeatNumber": 0
+          },
+          {
+              "seatNumber": 16,
+              "nextSeatNumber": 0
+          },
+          {
+              "seatNumber": 17,
+              "nextSeatNumber": 0
+          },
+          {
+              "seatNumber": 18,
+              "nextSeatNumber": 0
+          },
+          {
+              "seatNumber": 21,
+              "nextSeatNumber": 0
+          },
+          {
+              "seatNumber": 24,
+              "nextSeatNumber": 0
+          },
+          {
+              "seatNumber": 27,
+              "nextSeatNumber": 0
+          },
+          {
+              "seatNumber": 30,
+              "nextSeatNumber": 0
+          },
+          {
+              "seatNumber": 35,
+              "nextSeatNumber": 0
+          },
+          {
+              "seatNumber": 38,
+              "nextSeatNumber": 0
+          }
+        ]
+      },
+    
+    {
+        "section": 2,
+        "type": "second",
+        "seats": [
+          {
+              "seatNumber": 41,
+              "nextSeatNumber": 0
+          }
+          
+        ]
+      },
+    
+    
+    
+    {
+        "section": 4,
+        "type": "third",
+        "seats": [
+            {
+                "seatNumber": 2,
+                "nextSeatNumber": 3
+            },
+            {
+                "seatNumber": 5,
+                "nextSeatNumber": 6
+            },
+            {
+                "seatNumber": 8,
+                "nextSeatNumber": 9
+            },
+            {
+                "seatNumber": 11,
+                "nextSeatNumber": 12
+            },
+            {
+                "seatNumber": 14,
+                "nextSeatNumber": 15
+            },
+            {
+                "seatNumber": 19,
+                "nextSeatNumber": 20
+            },
+            {
+                "seatNumber": 22,
+                "nextSeatNumber": 23
+            },
+            {
+                "seatNumber": 25,
+                "nextSeatNumber": 26
+            },
+            {
+                "seatNumber": 28,
+                "nextSeatNumber": 29
+            },
+            {
+                "seatNumber": 31,
+                "nextSeatNumber": 32
+            },
+            {
+                "seatNumber": 33,
+                "nextSeatNumber": 34
+            },
+            {
+                "seatNumber": 36,
+                "nextSeatNumber": 37
+            },
+            {
+                "seatNumber": 39,
+                "nextSeatNumber": 40
+            }
+        ]
+      },
+    
+  {
+    "section": 3,
+    "type": "third",
+    "seats": [
+      {
+          "seatNumber": 3,
+          "nextSeatNumber": 2
+      },
+      {
+          "seatNumber": 6,
+          "nextSeatNumber": 5
+      },
+      {
+          "seatNumber": 9,
+          "nextSeatNumber": 8
+      },
+      {
+          "seatNumber": 12,
+          "nextSeatNumber": 11
+      },
+      {
+          "seatNumber": 15,
+          "nextSeatNumber": 14
+      },
+      {
+          "seatNumber": 20,
+          "nextSeatNumber": 19
+      },
+      {
+          "seatNumber": 23,
+          "nextSeatNumber": 22
+      },
+      {
+          "seatNumber": 26,
+          "nextSeatNumber": 25
+      },
+      {
+          "seatNumber": 29,
+          "nextSeatNumber": 28
+      },
+      {
+          "seatNumber": 32,
+          "nextSeatNumber": 31
+      },
+      {
+          "seatNumber": 34,
+          "nextSeatNumber": 33
+      },
+      {
+          "seatNumber": 37,
+          "nextSeatNumber": 36
+      },
+      {
+          "seatNumber": 40,
+          "nextSeatNumber": 39
+      }
+    ]
+  },
+  
+  
+
+]
+
+
+
