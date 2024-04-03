@@ -6,31 +6,134 @@
 //
 
 import UIKit
+import CoreData
 
 class ViewController: UIViewController, UICollectionViewDelegate {
+    
+    let tripNumber = 0
+    let voyagesArray = [["Istanbul","Ankara","01/07/2024 12:30:00"],["Sinop","Trabzon","03/08/2024 15:00:00"]]
+    let voyagesSeatArray = [[[1,Gender.empty.toString()]
+                             ,[2,Gender.male.toString()]
+                             ,[3,Gender.empty.toString()]
+                             ,[4,Gender.empty.toString()]
+                             ,[5,Gender.empty.toString()]
+                             ,[6,Gender.female.toString()]
+                             ,[7,Gender.empty.toString()]
+                             ,[8,Gender.empty.toString()]
+                             ,[9,Gender.empty.toString()]
+                             ,[10,Gender.empty.toString()]
+                             ,[11,Gender.empty.toString()]
+                             ,[12,Gender.empty.toString()]
+                             ,[13,Gender.empty.toString()]
+                             ,[14,Gender.empty.toString()]
+                             ,[15,Gender.female.toString()]
+                             ,[16,Gender.empty.toString()]
+                             ,[17,Gender.empty.toString()]
+                             ,[18,Gender.empty.toString()]
+                             ,[19,Gender.empty.toString()]
+                             ,[20,Gender.empty.toString()]
+                             ,[21,Gender.empty.toString()]
+                             ,[22,Gender.empty.toString()]
+                             ,[23,Gender.empty.toString()]
+                             ,[24,Gender.empty.toString()]
+                             ,[25,Gender.empty.toString()]
+                             ,[26,Gender.empty.toString()]
+                             ,[27,Gender.empty.toString()]
+                             ,[28,Gender.empty.toString()]
+                             ,[29,Gender.empty.toString()]
+                             ,[30,Gender.empty.toString()]
+                             ,[31,Gender.female.toString()]
+                             ,[32,Gender.empty.toString()]
+                             ,[33,Gender.empty.toString()]
+                             ,[34,Gender.empty.toString()]
+                             ,[35,Gender.empty.toString()]
+                             ,[36,Gender.empty.toString()]
+                             ,[37,Gender.empty.toString()]
+                             ,[38,Gender.empty.toString()]
+                             ,[39,Gender.empty.toString()]
+                             ,[40,Gender.male.toString()]
+                             ,[41,Gender.empty.toString()]
+                             ,[42,Gender.empty.toString()]
+                             ,[43,Gender.empty.toString()]
+                             ,[44,Gender.empty.toString()]
+                             ,[45,Gender.empty.toString()]
+],[[1,Gender.empty.toString()]
+        ,[2,Gender.female.toString()]
+        ,[3,Gender.female.toString()]
+        ,[4,Gender.empty.toString()]
+        ,[5,Gender.empty.toString()]
+        ,[6,Gender.female.toString()]
+        ,[7,Gender.empty.toString()]
+        ,[8,Gender.empty.toString()]
+        ,[9,Gender.empty.toString()]
+        ,[10,Gender.empty.toString()]
+        ,[11,Gender.empty.toString()]
+        ,[12,Gender.empty.toString()]
+        ,[13,Gender.empty.toString()]
+        ,[14,Gender.empty.toString()]
+        ,[15,Gender.female.toString()]
+        ,[16,Gender.empty.toString()]
+        ,[17,Gender.empty.toString()]
+        ,[18,Gender.empty.toString()]
+        ,[19,Gender.male.toString()]
+        ,[20,Gender.empty.toString()]
+        ,[21,Gender.empty.toString()]
+        ,[22,Gender.empty.toString()]
+        ,[23,Gender.empty.toString()]
+        ,[24,Gender.empty.toString()]
+        ,[25,Gender.empty.toString()]
+        ,[26,Gender.empty.toString()]
+        ,[27,Gender.empty.toString()]
+        ,[28,Gender.male.toString()]
+        ,[29,Gender.empty.toString()]
+        ,[30,Gender.empty.toString()]
+        ,[31,Gender.female.toString()]
+        ,[32,Gender.empty.toString()]
+        ,[33,Gender.empty.toString()]
+        ,[34,Gender.empty.toString()]
+        ,[35,Gender.empty.toString()]
+        ,[36,Gender.empty.toString()]
+        ,[37,Gender.empty.toString()]
+        ,[38,Gender.empty.toString()]
+        ,[39,Gender.male.toString()]
+        ,[40,Gender.male.toString()]
+        ,[41,Gender.empty.toString()]
+        ,[42,Gender.empty.toString()]
+        ,[43,Gender.empty.toString()]
+        ,[44,Gender.empty.toString()]
+        ,[45,Gender.empty.toString()]
+]]
     
     let sections = Bundle.main.decode([Section].self, from: "dataSeats.json")
     var collectionView : UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<Section, Seats>?
+    
     let screenWidth = UIScreen.main.bounds.width
     let screenHeight = UIScreen.main.bounds.height
     let screenWidthSpace: CGFloat = 40
     let screenHeightSpace: CGFloat = 10
     let screenHeightRatio: CGFloat = 0.7
+    
+
+    var infoLabel = UILabel()
+    var buyButton = UIButton()
+    
+    var seatStatus = [
+        BusSeatsDetail(gender: .male, seatNumber: 1),
+        BusSeatsDetail(gender: .male, seatNumber: 2),
+        BusSeatsDetail(gender: .empty, seatNumber: 3),
+        BusSeatsDetail(gender: .female, seatNumber: 4),
+        BusSeatsDetail(gender: .female, seatNumber: 5),
+        BusSeatsDetail(gender: .female, seatNumber: 38)
+    ]
+    var voyageClass : [Voyage]? = []
+    
+//    var dateArray = [Any]()
+
+    
     let busRow: CGFloat = 15
     let busColumn: CGFloat = 5
     let seatProportion: CGFloat = 2
-    var infoLabel = UILabel()
-    var buyButton = UIButton()
-    var seatStatus = [
-        SelectedSeatsDetail(gender: .male, seatNumber: 1),
-        SelectedSeatsDetail(gender: .male, seatNumber: 2),
-        SelectedSeatsDetail(gender: .empty, seatNumber: 3),
-        SelectedSeatsDetail(gender: .female, seatNumber: 4),
-        SelectedSeatsDetail(gender: .female, seatNumber: 5),
-        SelectedSeatsDetail(gender: .female, seatNumber: 38)
-    ]
-    
     enum SectionKind: Int, CaseIterable {
         case first
         case second
@@ -61,11 +164,35 @@ class ViewController: UIViewController, UICollectionViewDelegate {
         
     }
     
+    //    MARK: DIDLOAD
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch")
+               if !isFirstLaunch {
+                 
+                   createCoreData()
+              
+                   UserDefaults.standard.set(true, forKey: "isFirstLaunch")
+               }
+        
+            
+        getCoreData()
         fillSeatStatus()
         
+        if let voyageClass, voyageClass.count > 0 {
+            for i in 0...voyageClass.count - 1 {
+                print("\(i). inci voyageclass elemanlari")
+                print("initialPoint: \(voyageClass[i].initialPoint)")
+                print("finalPoint: \(voyageClass[i].finishPoint)")
+                print("initialDate: \(voyageClass[i].voyageDate.day)")
+                for j in 0...(voyageClass[i].seatsStatus.count) - 1 {
+                    print("seatNumber \(voyageClass[i].seatsStatus[j].seatNumber), seatGender: \(voyageClass[i].seatsStatus[j].gender)")
+    
+                }
+            }
+        }
         let collectionViewHeight = view.bounds.height * screenHeightRatio
         let collectionViewFrame = CGRect(
             x: Int(screenWidthSpace) / 2 ,
@@ -104,10 +231,14 @@ class ViewController: UIViewController, UICollectionViewDelegate {
         
     }
     
+    //    MARK: DIDAPPEAR
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        changeSeats()
+        changeSeats2()
     }
+    
+    // MARK : COMPOSITIONAL LAYOUT
     
     func createCompositionalLayout() -> UICollectionViewLayout {
         let config = UICollectionViewCompositionalLayoutConfiguration()
@@ -195,6 +326,8 @@ class ViewController: UIViewController, UICollectionViewDelegate {
         return layout
     }
     
+//    MARK: CREATE DATASOURCE
+    
     func createDataSource() {
         
         dataSource = UICollectionViewDiffableDataSource<Section, Seats>(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
@@ -208,6 +341,8 @@ class ViewController: UIViewController, UICollectionViewDelegate {
         
     }
     
+//    MARK: RELOAD DATASOURCE
+    
     func reloadData() {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Seats>()
         snapshot.appendSections(sections)
@@ -219,6 +354,8 @@ class ViewController: UIViewController, UICollectionViewDelegate {
         dataSource?.apply(snapshot)
     }
     
+    
+    //    MARK: CELL CONFIGURE
     private func configure<T: seatProtocol>(_ cellType: T.Type, with seat: Seats, for indexPath: IndexPath) -> T {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellType.reuseIdentifier, for: indexPath) as? T else {
             fatalError("Unable to dequeue \(cellType)")
@@ -227,6 +364,7 @@ class ViewController: UIViewController, UICollectionViewDelegate {
         return cell
     }
     
+    //    MARK: COLLECTIONVIEW SELECT ITEM
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let cell = collectionView.cellForItem(at: indexPath) as? SingleCell
@@ -239,7 +377,7 @@ class ViewController: UIViewController, UICollectionViewDelegate {
             
             let section = sections[indexPath.section]
             let nextSeatNumber = section.seats[indexPath.item].nextSeatNumber
-            let nextToSelectedSeat = self.seatStatus.first(where: { $0.seatNumber == nextSeatNumber })
+            let nextToSelectedSeat = self.voyageClass?[tripNumber].seatsStatus.first(where: { $0.seatNumber == nextSeatNumber })
             
             let alert = UIAlertController(title: "Select Gender", message: "Please select passenger gender:", preferredStyle: .alert)
             let buttonM = UIAlertAction(title: Gender.male.toString() , style: .default, handler: { _ in
@@ -262,9 +400,10 @@ class ViewController: UIViewController, UICollectionViewDelegate {
             self.present(alert, animated: true, completion: nil)
         }
     }
+    
 }
  
-// MARK: - Helpers
+// MARK: FILL THE SEAT IMAGES AND ENABLERS
 private extension ViewController {
     final func changeSeats() {
         sections.enumerated().forEach { sectionIndex, section in
@@ -280,12 +419,166 @@ private extension ViewController {
         }
     }
     
+    final func changeSeats2() {
+        sections.enumerated().forEach { sectionIndex, section in
+            section.seats.enumerated().forEach { seatIndex, seats in
+                let cell = collectionView.cellForItem(at: [sectionIndex,seatIndex]) as? SingleCell
+    
+                voyageClass?[tripNumber].seatsStatus.forEach { seat in
+                    guard seat.seatNumber == seats.seatNumber else { return }
+                    let (image, bool) = seat.determineSeatStatus()
+                    cell?.seatView.image = image
+                    cell?.isUserInteractionEnabled = bool
+                }
+            }
+        }
+    }
+    
+    
+    
+    //    MARK: DEFINING SEAT STATUS
     final func fillSeatStatus() {
         let existedNumbers = seatStatus.map { $0.seatNumber }
         let numbers = Array(1...45)
         numbers.forEach { seatNumber in
             guard !existedNumbers.contains(seatNumber) else { return }
-            seatStatus.append(SelectedSeatsDetail(gender: .empty, seatNumber: seatNumber))
+            seatStatus.append(BusSeatsDetail(gender: .empty, seatNumber: seatNumber))
         }
     }
 }
+
+
+//    MARK: COREDATA FUNCS
+
+extension ViewController {
+
+    func createCoreData() {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {return}
+        let context = appDelegate.persistentContainer.viewContext
+        
+        for num in 0...voyagesArray.count - 1 {
+    
+            let newBus = NSEntityDescription.insertNewObject(forEntityName: "BusStatus",  into: context)
+            newBus.setValue(voyagesArray[num][0], forKey: "busInitialPoint")
+            newBus.setValue(voyagesArray[num][1], forKey: "busFinalPoint")
+            let busID = UUID()
+            newBus.setValue(busID, forKey: "busID")
+      
+     
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "dd/MM/yyyy HH:mm:ss"
+            dateFormatter.timeZone = TimeZone(identifier: "UTC")
+            let dateString = voyagesArray[num][2]
+
+            if let date = dateFormatter.date(from: dateString) {
+                let nsDate = NSDate(timeIntervalSince1970: date.timeIntervalSince1970)
+                newBus.setValue(nsDate, forKey: "date")
+            
+            }
+            
+            for seats in voyagesSeatArray[num] {
+                let seat = NSEntityDescription.insertNewObject(forEntityName: "SeatStatus",  into: context)
+                seat.setValue(seats[0], forKey: "seatGender")
+                seat.setValue(seats[0], forKey: "seatNumber")
+                seat.setValue(newBus, forKey:  "busR")
+            }
+            
+//            for seatNumber in 1...45 {
+//
+//                let seat = NSEntityDescription.insertNewObject(forEntityName: "SeatStatus",  into: context)
+//
+//                if seatNumber % 2 == 0 {
+//                    seat.setValue(Gender.female.toString(), forKey: "seatGender")
+//                } else {
+//                    seat.setValue(Gender.male.toString(), forKey: "seatGender")
+//                }
+//                seat.setValue(seatNumber, forKey: "seatNumber")
+//                seat.setValue(newBus, forKey:  "busR")
+//            }
+        }
+        
+        
+        do {
+            try context.save()
+        } catch  {
+            print("veri kaydedilemedi")
+        }
+    }
+    
+    
+    func getCoreData() {
+        
+//        busInitial.removeAll(keepingCapacity: false)
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {return}
+        let context = appDelegate.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "BusStatus")
+        do {
+            let results = try context.fetch(fetchRequest)
+            if results.count > 0 {
+                for result in results as! [NSManagedObject] {
+                    guard let initial = result.value(forKey: "busInitialPoint") as? String else {return}
+                    guard let final = result.value(forKey: "busFinalPoint") as? String else {return}
+       //              guard let UUID = result.value(forKey: "busID") as? UUID else {return}
+                    guard let date = result.value(forKey: "date") as? Date else {return}
+                    
+                    
+           
+                    var year = Int()
+                    var month = Int()
+                    var day = Int()
+                    var hour = Int()
+                    var minute = Int()
+                    
+                        let calendar = Calendar.current
+                        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+              
+                        if let y = components.year,
+                           let mo = components.month,
+                           let d = components.day,
+                           let h = components.hour,
+                           let mi = components.minute {
+                            year = y
+                            month = mo
+                            day = d
+                            hour = h
+                            minute = mi
+                            
+                        }
+              
+                    let voyageH = VoyageHour(hour: hour, minute: minute)
+                    let voyageD = VoyageDate(day: day, month: month, year: year, hour: voyageH)
+                    
+                    var seatsSeries : [BusSeatsDetail]? = []
+                    
+                    result.willAccessValue(forKey: "seatR")
+                    if let seatStatuses = result.value(forKey: "seatR") as? Set<NSManagedObject> {
+                        result.didAccessValue(forKey: "seatR")
+               
+                        for seatStatus in seatStatuses {
+                            guard let seatGender = seatStatus.value(forKey: "seatGender") as? String else { continue }
+                            guard let seatNum = seatStatus.value(forKey: "seatNumber") as? Int else { continue }
+                            let seatInfos = BusSeatsDetail(gender: seatGender.genderEnum, seatNumber: seatNum)
+                            seatsSeries?.append(seatInfos)
+                        }
+                    }
+
+                    if let seatsSeries {
+                        let vyg = Voyage(initialPoint: initial, finishPoint: final, seatsStatus: seatsSeries, voyageDate: voyageD)
+                        voyageClass?.append(vyg)
+                    }
+              
+
+                }
+                //self.collectionView.reloadData()
+            } else {
+                print("data yok")
+            }
+        }
+            catch {
+                print("data alınamadı")
+            }
+    }
+
+
+}
+

@@ -26,3 +26,18 @@ extension Bundle {
         return contents
     }
 }
+
+
+
+extension String {
+    var genderEnum: Gender {
+        switch self.lowercased() {
+        case "male":
+            return .male
+        case "female":
+            return .female
+        default:
+            return .empty
+        }
+    }
+}

@@ -11,12 +11,12 @@ import UIKit
 class Passengers {
     var passenger: [Passenger]
     var date: Date
-    var hour: Hour
+    var hour: VoyageHour
     var seatArray: [Int]
     var seatNum: Int
     var fromtoDirection: Direction
     
-    init(passenger: [Passenger], date: Date, hour: Hour, seatArray: [Int], seatNum: Int, fromtoDirection: Direction) {
+    init(passenger: [Passenger], date: Date, hour: VoyageHour, seatArray: [Int], seatNum: Int, fromtoDirection: Direction) {
         self.passenger = passenger
         self.date = date
         self.hour = hour
@@ -52,7 +52,7 @@ class Passengers {
     
     func printTicket() {
         for i in 1 ... seatNum {
-            print("passenger info: \(passenger[i].id)-\(passenger[i].surname)-\(passenger[i].name) - direction: from \(fromtoDirection.initialPoint) to \(fromtoDirection.finishPoint) - seat num: \(seatArray[i]) - date: \(hour.minute) : \(hour.hour) \(date.day)/\(date.month)/\(date.year)")
+//            print("passenger info: \(passenger[i].id)-\(passenger[i].surname)-\(passenger[i].name) - direction: from \(fromtoDirection.initialPoint) to \(fromtoDirection.finishPoint) - seat num: \(seatArray[i]) - date: \(hour.minute) : \(hour.hour) \(date.day)/\(date.month)/\(date.year)")
         }
     }
     
@@ -72,19 +72,21 @@ class Passenger {
     }
 }
 
-class Date {
+class VoyageDate {
     var day: Int = 01
     var month: Int = 01
     var year: Int = 2024
+    var hour: VoyageHour
     
-    init(day: Int, month: Int, year: Int) {
+    init(day: Int, month: Int, year: Int, hour: VoyageHour) {
         self.day = day
         self.month = month
         self.year = year
+        self.hour = hour
     }
 }
 
-class Hour {
+class VoyageHour {
     var hour: Int = 00
     var minute: Int = 00
     
@@ -106,15 +108,15 @@ class Direction {
 }
 
 class selectedSeats {
-    var selectedSeats : [SelectedSeatsDetail]
+    var selectedSeats : [BusSeatsDetail]
     
-    init(selectedSeats: [SelectedSeatsDetail]) {
+    init(selectedSeats: [BusSeatsDetail]) {
         self.selectedSeats = selectedSeats
     }
     
 }
 
-class SelectedSeatsDetail {
+class BusSeatsDetail {
     var gender: Gender
     var seatNumber: Int
     
@@ -137,16 +139,19 @@ class SelectedSeatsDetail {
 }
 
 class Voyage {
-    var direction : [Direction]
-    var seatsStatus: [SelectedSeatsDetail]
-    var voyageDate: [Date]
-    var voyageHour: [Hour]
+    var initialPoint: String
+    var finishPoint: String
+    var seatsStatus: [BusSeatsDetail]
+    var voyageDate: VoyageDate
     
-    init(direction: [Direction], seatsStatus: [SelectedSeatsDetail], voyageDate: [Date], voyageHour: [Hour]) {
-        self.direction = direction
+    init(initialPoint: String, finishPoint: String, seatsStatus: [BusSeatsDetail] , voyageDate: VoyageDate
+    
+    ) {
+        self.initialPoint = initialPoint
+        self.finishPoint = finishPoint
         self.seatsStatus = seatsStatus
         self.voyageDate = voyageDate
-        self.voyageHour = voyageHour
+
     }
     
 }
