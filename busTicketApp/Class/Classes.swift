@@ -139,14 +139,16 @@ class BusSeatsDetail {
 }
 
 class Voyage {
+    var busID: UUID
     var initialPoint: String
     var finishPoint: String
     var seatsStatus: [BusSeatsDetail]
     var voyageDate: VoyageDate
     
-    init(initialPoint: String, finishPoint: String, seatsStatus: [BusSeatsDetail] , voyageDate: VoyageDate
+    init(busID: UUID, initialPoint: String, finishPoint: String, seatsStatus: [BusSeatsDetail] , voyageDate: VoyageDate
     
     ) {
+        self.busID = busID
         self.initialPoint = initialPoint
         self.finishPoint = finishPoint
         self.seatsStatus = seatsStatus

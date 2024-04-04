@@ -10,7 +10,7 @@ import CoreData
 
 class ViewController: UIViewController, UICollectionViewDelegate {
     
-    let tripNumber = 0
+    var tripNumber = Int()
     let voyagesArray = [["Istanbul","Ankara","01/07/2024 12:30:00"],["Sinop","Trabzon","03/08/2024 15:00:00"]]
     let voyagesSeatArray = [[[1,Gender.empty.toString()]
                              ,[2,Gender.male.toString()]
@@ -116,18 +116,20 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     
 
     var infoLabel = UILabel()
+    var directionLabel = UILabel()
     var buyButton = UIButton()
     
-    var seatStatus = [
-        BusSeatsDetail(gender: .male, seatNumber: 1),
-        BusSeatsDetail(gender: .male, seatNumber: 2),
-        BusSeatsDetail(gender: .empty, seatNumber: 3),
-        BusSeatsDetail(gender: .female, seatNumber: 4),
-        BusSeatsDetail(gender: .female, seatNumber: 5),
-        BusSeatsDetail(gender: .female, seatNumber: 38)
-    ]
+//    var seatStatus = [
+//        BusSeatsDetail(gender: .male, seatNumber: 1),
+//        BusSeatsDetail(gender: .male, seatNumber: 2),
+//        BusSeatsDetail(gender: .empty, seatNumber: 3),
+//        BusSeatsDetail(gender: .female, seatNumber: 4),
+//        BusSeatsDetail(gender: .female, seatNumber: 5),
+//        BusSeatsDetail(gender: .female, seatNumber: 38)
+//    ]
     var voyageClass : [Voyage]? = []
-    
+    let selectedRouteID = UUID(uuidString: "8E39ED36-937D-452D-8773-6AB7E1ACB9B2")
+
 //    var dateArray = [Any]()
 
     
@@ -168,6 +170,7 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    
         
         let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch")
                if !isFirstLaunch {
@@ -177,16 +180,26 @@ class ViewController: UIViewController, UICollectionViewDelegate {
                    UserDefaults.standard.set(true, forKey: "isFirstLaunch")
                }
         
-            
         getCoreData()
-        fillSeatStatus()
+        
+        if let findingRouteIndex = voyageClass?.firstIndex(where: { $0.busID == selectedRouteID }) {
+         tripNumber = findingRouteIndex
+        }
+
+  
+//        fillSeatStatus()
         
         if let voyageClass, voyageClass.count > 0 {
             for i in 0...voyageClass.count - 1 {
                 print("\(i). inci voyageclass elemanlari")
                 print("initialPoint: \(voyageClass[i].initialPoint)")
                 print("finalPoint: \(voyageClass[i].finishPoint)")
-                print("initialDate: \(voyageClass[i].voyageDate.day)")
+                print("UUID si: \(voyageClass[i].busID)")
+                print("initialDateYear: \(voyageClass[i].voyageDate.year)")
+                print("initialDateMonth: \(voyageClass[i].voyageDate.month)")
+                print("initialDateDay: \(voyageClass[i].voyageDate.day)")
+                print("initialDate Hour: \(voyageClass[i].voyageDate.hour.hour)")
+                print("initialDate Minute: \(voyageClass[i].voyageDate.hour.minute)")
                 for j in 0...(voyageClass[i].seatsStatus.count) - 1 {
                     print("seatNumber \(voyageClass[i].seatsStatus[j].seatNumber), seatGender: \(voyageClass[i].seatsStatus[j].gender)")
     
@@ -210,20 +223,31 @@ class ViewController: UIViewController, UICollectionViewDelegate {
         //        changeSeats()
         //        collectionView.reloadData()
         
-        let infoLabelFrame = CGRect(x: 0 , y: Int(view.bounds.height * 0.05), width: Int(screenWidth), height: Int(view.bounds.height * 0.10))
+        let infoLabelFrame = CGRect(x: 5 , y: Int(view.bounds.height * 0.10), width: Int(screenWidth), height: Int(view.bounds.height * 0.05))
         infoLabel = UILabel(frame: infoLabelFrame)
-        infoLabel.textAlignment = .center
+        infoLabel.textAlignment = .left
         infoLabel.textColor = .black
         infoLabel.numberOfLines = 3
         infoLabel.text = "Selected Seats: "
         view.addSubview(infoLabel)
+        
+        let directionLabelFrame = CGRect(x: 5 , y: Int(view.bounds.height * 0.05), width: Int(screenWidth), height: Int(view.bounds.height * 0.05))
+        directionLabel = UILabel(frame: directionLabelFrame)
+        directionLabel.textAlignment = .left
+        directionLabel.textColor = .black
+        directionLabel.numberOfLines = 3
+        directionLabel.text = "Direction: \(voyageClass?[tripNumber].initialPoint ?? "") to \(voyageClass?[tripNumber].finishPoint ?? "")"
+    
+        view.addSubview(directionLabel)
         
         let buyFrame = CGRect(x: (Int(screenWidth) - 160)/2 , y: Int(view.bounds.height * 0.89), width: 160, height: Int(view.bounds.height * 0.06))
         buyButton = UIButton(frame: buyFrame)
         buyButton.backgroundColor = .systemBlue
         buyButton.layer.cornerRadius = 5
         buyButton.setTitle( "Buy The Ticket", for: .normal)
+        buyButton.isUserInteractionEnabled = true
         view.addSubview(buyButton)
+        buyButton.addTarget(self, action: #selector(buttonClicked), for: .touchUpInside)
         
         collectionView.register(SingleCell.self, forCellWithReuseIdentifier: SingleCell.reuseIdentifier)
         createDataSource()
@@ -405,19 +429,19 @@ class ViewController: UIViewController, UICollectionViewDelegate {
  
 // MARK: FILL THE SEAT IMAGES AND ENABLERS
 private extension ViewController {
-    final func changeSeats() {
-        sections.enumerated().forEach { sectionIndex, section in
-            section.seats.enumerated().forEach { seatIndex, seats in
-                let cell = collectionView.cellForItem(at: [sectionIndex,seatIndex]) as? SingleCell
-                seatStatus.forEach { seat in
-                    guard seat.seatNumber == seats.seatNumber else { return }
-                    let (image, bool) = seat.determineSeatStatus()
-                    cell?.seatView.image = image
-                    cell?.isUserInteractionEnabled = bool
-                }
-            }
-        }
-    }
+//    final func changeSeats() {
+//        sections.enumerated().forEach { sectionIndex, section in
+//            section.seats.enumerated().forEach { seatIndex, seats in
+//                let cell = collectionView.cellForItem(at: [sectionIndex,seatIndex]) as? SingleCell
+//                seatStatus.forEach { seat in
+//                    guard seat.seatNumber == seats.seatNumber else { return }
+//                    let (image, bool) = seat.determineSeatStatus()
+//                    cell?.seatView.image = image
+//                    cell?.isUserInteractionEnabled = bool
+//                }
+//            }
+//        }
+//    }
     
     final func changeSeats2() {
         sections.enumerated().forEach { sectionIndex, section in
@@ -437,20 +461,88 @@ private extension ViewController {
     
     
     //    MARK: DEFINING SEAT STATUS
-    final func fillSeatStatus() {
-        let existedNumbers = seatStatus.map { $0.seatNumber }
-        let numbers = Array(1...45)
-        numbers.forEach { seatNumber in
-            guard !existedNumbers.contains(seatNumber) else { return }
-            seatStatus.append(BusSeatsDetail(gender: .empty, seatNumber: seatNumber))
+//    final func fillSeatStatus() {
+//        let existedNumbers = seatStatus.map { $0.seatNumber }
+//        let numbers = Array(1...45)
+//        numbers.forEach { seatNumber in
+//            guard !existedNumbers.contains(seatNumber) else { return }
+//            seatStatus.append(BusSeatsDetail(gender: .empty, seatNumber: seatNumber))
+//        }
+//    }
+    
+    @objc func buttonClicked() {
+        
+        
+
+        
+        print("butona basildi")
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {return}
+        let context = appDelegate.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "BusStatus")
+        
+        fetchRequest.predicate = NSPredicate(format: "busID == %@", selectedRouteID!.uuidString)
+        do {
+            let results = try context.fetch(fetchRequest)
+            if let result = results.first as? NSManagedObject {
+//                    result.setValue("Istanbul", forKey: "busInitialPoint")
+                result.willAccessValue(forKey: "seatR")
+                if let seatStatuses = result.value(forKey: "seatR") as? Set<NSManagedObject> {
+                    result.didAccessValue(forKey: "seatR")
+              
+                    
+                    // BURAYI PERFORMANS ANLAMINDA IYILESTIRMEK GEREK
+                    
+                    for seatStatus in seatStatuses {
+                        guard let seatNum = seatStatus.value(forKey: "seatNumber") as? Int else { continue }
+                        sections.enumerated().forEach { sectionIndex, section in
+                            section.seats.enumerated().forEach { seatIndex, seats in
+                                let cell = collectionView.cellForItem(at: [sectionIndex,seatIndex]) as? SingleCell
+                                print("section index \(sectionIndex)  seat index \(seatIndex)")
+                                print("coredatadaki seatnum \(seatNum)")
+                                print("celldeki seatnum \(cell?.seatNumLabel.text)")
+                                    guard cell?.seatNumLabel.text == String(seatNum) else { return }
+                                    print("burada1")
+                                    guard cell?.seatView.image != UIImage(named: "whiteseat") else { return }
+                                    print("image \(cell?.seatView.image)")
+                                    print("burada2")
+                                guard cell?.seatView.image == UIImage(named: "pinkSelected") else { return seatStatus.setValue(Gender.male.toString(), forKey:  "seatGender") }
+                                seatStatus.setValue(Gender.female.toString(), forKey:  "seatGender")
+                            
+                                   
+                            }
+                        }
+                    
+               
+                    }
+                }
+
+                           }
+
+            do {
+                try context.save()
+             
+
+            } catch {
+                print("Değişiklikleri kaydederken hata oluştu: \(error.localizedDescription)")
+            }
+            
+        } catch {
+            print("Hata: \(error.localizedDescription)")
         }
+ 
+          
+
     }
+
 }
 
 
 //    MARK: COREDATA FUNCS
 
 extension ViewController {
+    
+    
+
 
     func createCoreData() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {return}
@@ -478,7 +570,7 @@ extension ViewController {
             
             for seats in voyagesSeatArray[num] {
                 let seat = NSEntityDescription.insertNewObject(forEntityName: "SeatStatus",  into: context)
-                seat.setValue(seats[0], forKey: "seatGender")
+                seat.setValue(seats[1], forKey: "seatGender")
                 seat.setValue(seats[0], forKey: "seatNumber")
                 seat.setValue(newBus, forKey:  "busR")
             }
@@ -506,6 +598,8 @@ extension ViewController {
     }
     
     
+
+    
     func getCoreData() {
         
 //        busInitial.removeAll(keepingCapacity: false)
@@ -518,7 +612,7 @@ extension ViewController {
                 for result in results as! [NSManagedObject] {
                     guard let initial = result.value(forKey: "busInitialPoint") as? String else {return}
                     guard let final = result.value(forKey: "busFinalPoint") as? String else {return}
-       //              guard let UUID = result.value(forKey: "busID") as? UUID else {return}
+                    guard let UUID = result.value(forKey: "busID") as? UUID else {return}
                     guard let date = result.value(forKey: "date") as? Date else {return}
                     
                     
@@ -563,11 +657,12 @@ extension ViewController {
                     }
 
                     if let seatsSeries {
-                        let vyg = Voyage(initialPoint: initial, finishPoint: final, seatsStatus: seatsSeries, voyageDate: voyageD)
+                        let vyg = Voyage(busID: UUID, initialPoint: initial, finishPoint: final, seatsStatus: seatsSeries, voyageDate: voyageD)
                         voyageClass?.append(vyg)
+                        
                     }
               
-
+                    
                 }
                 //self.collectionView.reloadData()
             } else {
