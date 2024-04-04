@@ -10,6 +10,7 @@ import CoreData
 
 class ViewController: UIViewController, UICollectionViewDelegate {
     
+    var tempSeats = Set<String>()
     var tripNumber = Int()
     let voyagesArray = [["Istanbul","Ankara","01/07/2024 12:30:00"],["Sinop","Trabzon","03/08/2024 15:00:00"]]
     let voyagesSeatArray = [[[1,Gender.empty.toString()]
@@ -128,7 +129,7 @@ class ViewController: UIViewController, UICollectionViewDelegate {
 //        BusSeatsDetail(gender: .female, seatNumber: 38)
 //    ]
     var voyageClass : [Voyage]? = []
-    let selectedRouteID = UUID(uuidString: "8E39ED36-937D-452D-8773-6AB7E1ACB9B2")
+    let selectedRouteID = UUID(uuidString: "D2A32A9D-C9CF-4493-B736-D28577E34EA6")
 
 //    var dateArray = [Any]()
 
@@ -173,19 +174,16 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     
         
         let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch")
-               if !isFirstLaunch {
-                 
-                   createCoreData()
-              
-                   UserDefaults.standard.set(true, forKey: "isFirstLaunch")
-               }
+        if !isFirstLaunch {
+            createCoreData()
+            UserDefaults.standard.set(true, forKey: "isFirstLaunch")
+        }
         
         getCoreData()
         
         if let findingRouteIndex = voyageClass?.firstIndex(where: { $0.busID == selectedRouteID }) {
-         tripNumber = findingRouteIndex
+            tripNumber = findingRouteIndex
         }
-
   
 //        fillSeatStatus()
         
@@ -214,10 +212,12 @@ class ViewController: UIViewController, UICollectionViewDelegate {
             height: Int(collectionViewHeight)
         )
         collectionView = UICollectionView(frame: collectionViewFrame, collectionViewLayout: createCompositionalLayout())
-        collectionView.layer.cornerRadius = 5
+        collectionView.layer.cornerRadius = 8
         collectionView.backgroundColor = .systemGray6
         collectionView.isScrollEnabled = false
         collectionView.delegate = self
+        collectionView.layer.borderColor = UIColor.black.cgColor
+        collectionView.layer.borderWidth = 1
         view.addSubview(collectionView)
         //        changeSeats(seatStatus: seatStatus)
         //        changeSeats()
@@ -390,10 +390,15 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     
     //    MARK: COLLECTIONVIEW SELECT ITEM
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    
         
         let cell = collectionView.cellForItem(at: indexPath) as? SingleCell
+      
         if let image = cell?.seatView.image , image == UIImage(named: "blueSelected") || image == UIImage(named: "pinkSelected")  {
             cell?.seatView.image = UIImage(named: "whiteseat")
+            self.tempSeats.remove(cell?.seatNumLabel.text ?? "")
+            self.infoLabel.text = "Selected Seats: \(self.tempSeats) "
+           
         } else {
             let genderAlert = UIAlertController(title: "Gender Warning", message: "You cant select opposite gender", preferredStyle: .alert)
             let okButton = UIAlertAction(title: "Ok", style: .cancel)
@@ -402,6 +407,7 @@ class ViewController: UIViewController, UICollectionViewDelegate {
             let section = sections[indexPath.section]
             let nextSeatNumber = section.seats[indexPath.item].nextSeatNumber
             let nextToSelectedSeat = self.voyageClass?[tripNumber].seatsStatus.first(where: { $0.seatNumber == nextSeatNumber })
+           
             
             let alert = UIAlertController(title: "Select Gender", message: "Please select passenger gender:", preferredStyle: .alert)
             let buttonM = UIAlertAction(title: Gender.male.toString() , style: .default, handler: { _ in
@@ -409,14 +415,21 @@ class ViewController: UIViewController, UICollectionViewDelegate {
                     self.present(genderAlert, animated: true, completion: nil)
                 } else {
                     cell?.seatView.image = UIImage(named: "blueSelected")
+                    self.tempSeats.insert(cell?.seatNumLabel.text ?? "")
+                    self.infoLabel.text = "Selected Seats: \(self.tempSeats) "
                 }
                 
             })
-            let buttonF = UIAlertAction(title: Gender.female.toString() , style: .default, handler: { _ in
+            let buttonF = UIAlertAction(title: Gender.female.toString() , style: .default, handler: { [self] _ in
+            
                 if (nextToSelectedSeat?.gender.toString() ?? "Empty") == Gender.male.toString() {
                     self.present(genderAlert, animated: true, completion: nil)
+                   
                 } else {
                     cell?.seatView.image = UIImage(named: "pinkSelected")
+                    self.tempSeats.insert(cell?.seatNumLabel.text ?? "")
+                    self.infoLabel.text = "Selected Seats: \(self.tempSeats) "
+                
                 }
             })
             alert.addAction(buttonF)
@@ -497,18 +510,19 @@ private extension ViewController {
                         sections.enumerated().forEach { sectionIndex, section in
                             section.seats.enumerated().forEach { seatIndex, seats in
                                 let cell = collectionView.cellForItem(at: [sectionIndex,seatIndex]) as? SingleCell
-                                print("section index \(sectionIndex)  seat index \(seatIndex)")
-                                print("coredatadaki seatnum \(seatNum)")
-                                print("celldeki seatnum \(cell?.seatNumLabel.text)")
-                                    guard cell?.seatNumLabel.text == String(seatNum) else { return }
-                                    print("burada1")
-                                    guard cell?.seatView.image != UIImage(named: "whiteseat") else { return }
-                                    print("image \(cell?.seatView.image)")
-                                    print("burada2")
-                                guard cell?.seatView.image == UIImage(named: "pinkSelected") else { return seatStatus.setValue(Gender.male.toString(), forKey:  "seatGender") }
+                                
+                                
+                                guard cell?.seatNumLabel.text == String(seatNum) else { return }
+                                guard cell?.seatView.image != UIImage(named: "pink") else { return }
+                                guard cell?.seatView.image != UIImage(named: "blue") else { return }
+                                guard cell?.seatView.image != UIImage(named: "whiteseat") else { return }
+                                guard cell?.seatView.image == UIImage(named: "pinkSelected") else { 
+                                    cell?.seatView.image = UIImage(named: "blue")
+                                    return seatStatus.setValue(Gender.male.toString(), forKey:  "seatGender") }
                                 seatStatus.setValue(Gender.female.toString(), forKey:  "seatGender")
-                            
-                                   
+                                cell?.seatView.image = UIImage(named: "pink")
+                                
+                                
                             }
                         }
                     

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		ABA7028A2BBED8DE00F33992 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABA702892BBED8DE00F33992 /* MainViewController.swift */; };
 		ABCEC0022BB540B00061C9CD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCEC0012BB540B00061C9CD /* AppDelegate.swift */; };
 		ABCEC0042BB540B00061C9CD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCEC0032BB540B00061C9CD /* SceneDelegate.swift */; };
 		ABCEC0062BB540B00061C9CD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCEC0052BB540B00061C9CD /* ViewController.swift */; };
@@ -25,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		ABA702892BBED8DE00F33992 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		ABCEBFFE2BB540B00061C9CD /* busTicketApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = busTicketApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABCEC0012BB540B00061C9CD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ABCEC0032BB540B00061C9CD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -55,6 +57,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		ABA702882BBED89600F33992 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				ABCEC0052BB540B00061C9CD /* ViewController.swift */,
+				ABA702892BBED8DE00F33992 /* MainViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
 		ABCEBFF52BB540B00061C9CD = {
 			isa = PBXGroup;
 			children = (
@@ -74,6 +85,7 @@
 		ABCEC0002BB540B00061C9CD /* busTicketApp */ = {
 			isa = PBXGroup;
 			children = (
+				ABA702882BBED89600F33992 /* ViewControllers */,
 				ABCEC02B2BB56A3B0061C9CD /* Extension */,
 				ABCEC0262BB567B00061C9CD /* Model */,
 				ABCEC0212BB567290061C9CD /* Cell */,
@@ -81,7 +93,6 @@
 				ABCEC0182BB543C00061C9CD /* Class */,
 				ABCEC0012BB540B00061C9CD /* AppDelegate.swift */,
 				ABCEC0032BB540B00061C9CD /* SceneDelegate.swift */,
-				ABCEC0052BB540B00061C9CD /* ViewController.swift */,
 				ABCEC0072BB540B00061C9CD /* Main.storyboard */,
 				ABCEC00D2BB540B10061C9CD /* Assets.xcassets */,
 				ABCEC00F2BB540B10061C9CD /* LaunchScreen.storyboard */,
@@ -208,6 +219,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ABCEC00C2BB540B00061C9CD /* busTicketApp.xcdatamodeld in Sources */,
+				ABA7028A2BBED8DE00F33992 /* MainViewController.swift in Sources */,
 				ABCEC0312BB56B040061C9CD /* SingleCell.swift in Sources */,
 				ABCEC0062BB540B00061C9CD /* ViewController.swift in Sources */,
 				ABCEC0022BB540B00061C9CD /* AppDelegate.swift in Sources */,
