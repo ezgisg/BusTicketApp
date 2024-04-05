@@ -8,8 +8,14 @@
 import UIKit
 import CoreData
 
+protocol MessageDelegate {
+    func sendMessage(ID: UUID)
+}
+
+
 class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
     
+    var delegate : MessageDelegate?
     
     var voyageClass : [Voyage]? = []
     let voyagesArray = [
@@ -90,25 +96,31 @@ class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         datePicker.dataSource = self
         toPicker.isUserInteractionEnabled = false
         datePicker.isUserInteractionEnabled = false
-
+        
+        chooseButton.addTarget(self, action: #selector(chooseButtonTapped), for: .touchUpInside)
+        
+        
     }
 
     @IBAction func chooseButtonTapped(_ sender: UIButton) {
-       
+        guard let busID else {return}
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let viewController = storyboard.instantiateViewController(withIdentifier: "busSeatBoard") as! ViewController
+        delegate = viewController
+        delegate?.sendMessage(ID: busID)
+        present(viewController, animated: true, completion: nil)
       }
     
     func findUUID() {
-        
-        if let filteredRoutes = voyageClass?.filter(
-            {
+        if let filteredRoutes = voyageClass?.filter({
                 $0.initialPoint == selectedInitialPoint
                 && $0.finishPoint == selectedFinalPoint
-                && "\($0.voyageDate.day.twoDigit())-\($0.voyageDate.month.twoDigit())-\($0.voyageDate.year) \($0.voyageDate.hour.hour.twoDigit()):\($0.voyageDate.hour.minute.twoDigit())" == selectedDatePoint}
-        ),
-            !(filteredRoutes.isEmpty) {
+                && "\($0.voyageDate.day.twoDigit())-\($0.voyageDate.month.twoDigit())-\($0.voyageDate.year) \($0.voyageDate.hour.hour.twoDigit()):\($0.voyageDate.hour.minute.twoDigit())" == selectedDatePoint
+            }),
+           !(filteredRoutes.isEmpty) {
             let voyageID = filteredRoutes.map { $0.busID}
             busID = voyageID.first
-            print(busID)
+      
         }
     }
     

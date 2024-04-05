@@ -8,8 +8,9 @@
 import UIKit
 import CoreData
 
+
 class ViewController: UIViewController, UICollectionViewDelegate {
-    
+
     let sections = Bundle.main.decode([Section].self, from: "dataSeats.json")
     var dataSource: UICollectionViewDiffableDataSource<Section, Seats>?
     let voyagesArray = [["Istanbul","Ankara","01/07/2024 12:30:00"],["Sinop","Trabzon","03/08/2024 15:00:00"],["Sinop","Istanbul","03/08/2024 15:00:00"],["Sinop","Trabzon","03/08/2024 18:00:00"]]
@@ -30,7 +31,7 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     let screenHeightRatio: CGFloat = 0.7
 
     var voyageClass : [Voyage]? = []
-    let selectedRouteID = UUID(uuidString: "B42A0FE8-8245-4FBC-B8C8-F5B6B52AD4BB")
+    var selectedRouteID : UUID?
     var tripNumber = Int()
     var tempSeats = Set<String>()
     
@@ -73,8 +74,9 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
     
+        print("burada")
+        print(selectedRouteID)
         fillSeatGender()
-        
         let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch")
         if !isFirstLaunch {
             createCoreData()
@@ -519,3 +521,10 @@ extension ViewController {
     
 }
 
+extension ViewController: MessageDelegate {
+    func sendMessage(ID: UUID) {
+        selectedRouteID = ID
+        print("burası")
+        print(selectedRouteID)
+    }
+}
