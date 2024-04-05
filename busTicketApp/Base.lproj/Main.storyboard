@@ -38,19 +38,16 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5PT-XJ-6Sa">
-                                <rect key="frame" x="10" y="149" width="182" height="50"/>
+                                <rect key="frame" x="10" y="148.66666666666666" width="182" height="100"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="apb-xg-cPW"/>
+                                    <constraint firstAttribute="height" constant="100" id="apb-xg-cPW"/>
                                 </constraints>
                             </pickerView>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nPU-cB-U2m">
-                                <rect key="frame" x="222" y="149" width="182" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="TKG-wh-i10"/>
-                                </constraints>
+                                <rect key="frame" x="222" y="148.66666666666666" width="182" height="100"/>
                             </pickerView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Elv-RN-Wzp">
-                                <rect key="frame" x="107" y="368.66666666666669" width="200" height="35"/>
+                                <rect key="frame" x="107" y="478.66666666666669" width="200" height="35.000000000000057"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="A7e-8p-58h"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="WUD-kZ-Ds9"/>
@@ -59,9 +56,9 @@
                                 <buttonConfiguration key="configuration" style="plain" title="Choose"/>
                             </button>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GiG-hh-9Cf">
-                                <rect key="frame" x="10" y="249" width="392" height="40"/>
+                                <rect key="frame" x="10" y="298.66666666666669" width="392" height="100"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="4xT-Ui-tII"/>
+                                    <constraint firstAttribute="height" constant="100" id="4xT-Ui-tII"/>
                                 </constraints>
                             </pickerView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="From:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f1b-Yh-fK0">
@@ -77,7 +74,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZFu-Fg-gbm">
-                                <rect key="frame" x="20" y="222.66666666666666" width="392" height="24"/>
+                                <rect key="frame" x="20" y="272.66666666666669" width="392" height="24"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
