@@ -86,8 +86,9 @@ class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
             }
         }
         
-
-        
+    
+   
+     
         fromPicker.delegate = self
         fromPicker.dataSource = self
         toPicker.delegate = self
@@ -105,10 +106,14 @@ class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     @IBAction func chooseButtonTapped(_ sender: UIButton) {
         guard let busID else {return}
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let navController = storyboard.instantiateViewController(withIdentifier: "firstNavigationController") as! UINavigationController
         let viewController = storyboard.instantiateViewController(withIdentifier: "busSeatBoard") as! ViewController
         delegate = viewController
         delegate?.sendMessage(ID: busID)
-        present(viewController, animated: true, completion: nil)
+        navController.pushViewController(viewController, animated: true)
+        navController.modalPresentationStyle = .overFullScreen
+        present(navController, animated: true, completion: nil)
+
       }
     
     func findUUID() {
@@ -249,8 +254,14 @@ extension MainViewController {
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
 
-        
-        guard selectedInitialPoint != nil else { return nil }
+        guard selectedInitialPoint != nil else {
+            if pickerView == fromPicker {
+                if initialPointArray[row] == initialPointArray[0] {
+                    return "Please select"
+                }
+            }
+            return nil
+        }
         toPicker.isUserInteractionEnabled = true
         datePicker.isUserInteractionEnabled = true
             if pickerView == fromPicker {

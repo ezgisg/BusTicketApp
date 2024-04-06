@@ -18,10 +18,11 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
+                    <navigationItem key="navigationItem" id="Exc-8H-SZv"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1488" y="-13"/>
+            <point key="canvasLocation" x="2397.1014492753625" y="-13.392857142857142"/>
         </scene>
         <!--Main View Controller-->
         <scene sceneID="fdc-p0-12z">
@@ -37,17 +38,17 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5PT-XJ-6Sa">
-                                <rect key="frame" x="10" y="148.66666666666666" width="182" height="100"/>
+                            <pickerView clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5PT-XJ-6Sa">
+                                <rect key="frame" x="10" y="148.66666666666666" width="197" height="80"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="100" id="apb-xg-cPW"/>
+                                    <constraint firstAttribute="height" constant="80" id="apb-xg-cPW"/>
                                 </constraints>
                             </pickerView>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nPU-cB-U2m">
-                                <rect key="frame" x="222" y="148.66666666666666" width="182" height="100"/>
+                                <rect key="frame" x="207" y="148.66666666666666" width="197" height="80"/>
                             </pickerView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Elv-RN-Wzp">
-                                <rect key="frame" x="107" y="478.66666666666669" width="200" height="35.000000000000057"/>
+                                <rect key="frame" x="107" y="438.66666666666669" width="200" height="35"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="A7e-8p-58h"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="WUD-kZ-Ds9"/>
@@ -56,25 +57,25 @@
                                 <buttonConfiguration key="configuration" style="plain" title="Choose"/>
                             </button>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GiG-hh-9Cf">
-                                <rect key="frame" x="10" y="298.66666666666669" width="392" height="100"/>
+                                <rect key="frame" x="10" y="278.66666666666669" width="392" height="80"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="100" id="4xT-Ui-tII"/>
+                                    <constraint firstAttribute="height" constant="80" id="4xT-Ui-tII"/>
                                 </constraints>
                             </pickerView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="From:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f1b-Yh-fK0">
-                                <rect key="frame" x="20" y="122.66666666666669" width="182" height="24"/>
+                                <rect key="frame" x="20" y="122.66666666666669" width="197" height="24"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NPk-19-JXZ">
-                                <rect key="frame" x="232" y="122.66666666666669" width="182" height="24"/>
+                                <rect key="frame" x="217" y="122.66666666666669" width="197" height="24"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZFu-Fg-gbm">
-                                <rect key="frame" x="20" y="272.66666666666669" width="392" height="24"/>
+                                <rect key="frame" x="20" y="252.66666666666663" width="392" height="24"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -106,9 +107,10 @@
                             <constraint firstAttribute="trailing" secondItem="nPU-cB-U2m" secondAttribute="trailing" constant="10" id="wSo-GZ-lJa"/>
                             <constraint firstItem="5PT-XJ-6Sa" firstAttribute="leading" secondItem="7pH-fJ-jnG" secondAttribute="leading" constant="10" id="wsu-Bu-BIk"/>
                             <constraint firstItem="nPU-cB-U2m" firstAttribute="top" secondItem="NPk-19-JXZ" secondAttribute="bottom" constant="2" id="yRL-Zz-SuW"/>
-                            <constraint firstItem="nPU-cB-U2m" firstAttribute="leading" secondItem="5PT-XJ-6Sa" secondAttribute="trailing" constant="30" id="zhd-0E-OmM"/>
+                            <constraint firstItem="nPU-cB-U2m" firstAttribute="leading" secondItem="5PT-XJ-6Sa" secondAttribute="trailing" id="zhd-0E-OmM"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="n91-p1-fJx"/>
                     <connections>
                         <outlet property="chooseButton" destination="Elv-RN-Wzp" id="ZuV-0z-vhY"/>
                         <outlet property="datePicker" destination="GiG-hh-9Cf" id="I2o-uL-JJu"/>
@@ -119,6 +121,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ciq-5l-MAz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="500.00000000000006" y="-13.392857142857142"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="ci9-nN-Jo5">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Tgg-6q-c1y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <navigationController storyboardIdentifier="firstNavigationController" automaticallyAdjustsScrollViewInsets="NO" id="8f0-IO-OJO" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ah5-Rh-RPH">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="6OI-Tq-owf"/>
+                    </connections>
+                </navigationController>
+            </objects>
+            <point key="canvasLocation" x="1486.9565217391305" y="-13.392857142857142"/>
         </scene>
     </scenes>
     <resources>

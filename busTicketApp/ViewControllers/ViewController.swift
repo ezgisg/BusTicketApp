@@ -72,16 +72,18 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     //    MARK: DIDLOAD
     
     override func viewDidLoad() {
+      
+        let backButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
+        navigationItem.rightBarButtonItem = backButton
+        navigationItem.hidesBackButton = true
         super.viewDidLoad()
     
-        print("burada")
-        print(selectedRouteID)
-        fillSeatGender()
-        let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch")
-        if !isFirstLaunch {
-            createCoreData()
-            UserDefaults.standard.set(true, forKey: "isFirstLaunch")
-        }
+//        fillSeatGender()
+//        let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch")
+//        if !isFirstLaunch {
+//            createCoreData()
+//            UserDefaults.standard.set(true, forKey: "isFirstLaunch")
+//        }
         getCoreData()
         
         // temp variable , for selecting route
@@ -133,6 +135,7 @@ class ViewController: UIViewController, UICollectionViewDelegate {
         infoLabel.text = "Selected Seats: "
         view.addSubview(infoLabel)
         
+//        let spaceForNavigation = navigationController?.navigationBar.frame.height ?? 00
         let directionLabelFrame = CGRect(x: 5 , y: Int(view.bounds.height * 0.05), width: Int(screenWidth), height: Int(view.bounds.height * 0.05))
         directionLabel = UILabel(frame: directionLabelFrame)
         directionLabel.textAlignment = .left
@@ -160,6 +163,10 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         changeSeatImage()
+    }
+    
+    @objc func backButtonTapped() {
+        dismiss(animated: true, completion: nil)
     }
     
     func createCompositionalLayout() -> UICollectionViewLayout {
@@ -524,7 +531,6 @@ extension ViewController {
 extension ViewController: MessageDelegate {
     func sendMessage(ID: UUID) {
         selectedRouteID = ID
-        print("burası")
-        print(selectedRouteID)
+ 
     }
 }
