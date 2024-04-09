@@ -91,11 +91,15 @@ class ViewController: UIViewController, UICollectionViewDelegate {
       
         getCoreData()
         
+
+    
+        
         // temp variable , for selecting route
         if let findingRouteIndex = voyageClass?.firstIndex(where: { $0.busID == selectedRouteID }) {
             tripNumber = findingRouteIndex
+    
         }
-  
+ 
  
         
         //  view settings
@@ -152,6 +156,13 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         changeSeatImage()
+        for i in 0...(voyageClass?.count ?? 1) - 1 {
+            print("initial \(voyageClass![i].initialPoint)  finish \(voyageClass![i].finishPoint) date \(voyageClass![i].voyageDate.day)-\(voyageClass![i].voyageDate.month) : \(voyageClass![i].voyageDate.hour.hour) id \(voyageClass![i].busID)")
+//            for j in 0...(voyageClass?[i].seatsStatus.count)! - 1 {
+//                print("\(voyageClass![i].seatsStatus[j].seatNumber) \(voyageClass![i].seatsStatus[j].gender)")
+//            }
+        }
+        
     }
     
     @objc func backButtonTapped() {

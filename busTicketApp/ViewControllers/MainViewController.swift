@@ -8,13 +8,25 @@
 import UIKit
 import CoreData
 
-protocol MessageDelegate {
-    func sendMessage(ID: UUID)
-}
 
-
-class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UIPageViewControllerDelegate, UIPageViewControllerDataSource {
-
+class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+    
+    @IBOutlet weak var fromPicker: UIPickerView!
+    @IBOutlet weak var toPicker: UIPickerView!
+    @IBOutlet weak var datePicker: UIPickerView!
+    @IBOutlet weak var chooseButton: UIButton!
+    
+    var voyageClass : [Voyage]? = []
+    let voyagesArray = [
+        ["Istanbul","Ankara","01/07/2024 12:30:00"],
+        ["Sinop","Trabzon","10/09/2024 15:00:00"],
+        ["Sinop","Istanbul","08/05/2024 16:00:00"],
+        ["Sinop","Trabzon","03/08/2024 18:00:00"]
+    ]
+    var voyagesSeatArray = [[[5,Gender.male.toString()],[4,Gender.female.toString()]],
+                            [[10,Gender.male.toString()],[15,Gender.female.toString()]],
+                            [[11,Gender.male.toString()],[12,Gender.female.toString()],[14,Gender.female.toString()],[18,Gender.male.toString()]],
+                            [[6,Gender.male.toString()],[41,Gender.female.toString()]]]
     
     @IBOutlet weak var busImageView: UIImageView!
     let onboardingMessages = ["Welcome!", "Let's Start"]
@@ -24,102 +36,116 @@ class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     
     var delegate : MessageDelegate?
     
-    var voyageClass : [Voyage]? = []
-    let voyagesArray = [
-        ["Istanbul","Ankara","01/07/2024 12:30:00"],
-        ["Sinop","Trabzon","03/08/2024 15:00:00"],
-        ["Sinop","Istanbul","03/08/2024 15:00:00"],
-        ["Sinop","Trabzon","03/08/2024 18:00:00"]
-    ]
-    var voyagesSeatArray = [[[5,Gender.male.toString()],[4,Gender.female.toString()]],
-                             [[10,Gender.male.toString()],[15,Gender.female.toString()]],
-                            [[11,Gender.male.toString()],[12,Gender.female.toString()],[14,Gender.female.toString()],[18,Gender.male.toString()]],
-                            [[6,Gender.male.toString()],[41,Gender.female.toString()]]]
-    
     
     var selectedInitialPoint: String?
     var initialPointSet: Set<String> = []
     var initialPointArray: [String] = []
-    var afterSelectionInitialPointsArray: [String] = []
+
     
     var finalPointSet: Set<String> = []
     var finalPointArray: [String] = []
     var selectedFinalPoint: String?
     var afterSelectionFinalPointsArray: [String] = []
-
+    
     var selectedDatePoint: String?
     var datePointSet: Set<String> = []
     var datePointArray: [String] = []
-
+    
     var busID : UUID?
     
-    @IBOutlet weak var fromPicker: UIPickerView!
-    @IBOutlet weak var toPicker: UIPickerView!
-    @IBOutlet weak var datePicker: UIPickerView!
-    @IBOutlet weak var chooseButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
    
         
-        let vc1 = UIViewController()
-        vc1.view.backgroundColor = .white
-        controllers.append(vc1)
-        
-        let vc2 = UIViewController()
-        vc2.view.backgroundColor = .white
-        controllers.append(vc2)
-        
-        for i in 0...controllers.count - 1 {
-            let messageLabel = UILabel(frame: CGRect(x: 10 , y: view.frame.width + 70 , width: view.frame.width - 20 , height: 100))
-            messageLabel.text = onboardingMessages[i]
-            messageLabel.textColor = .black
-            messageLabel.numberOfLines = 0
-            messageLabel.textAlignment = .center
-            messageLabel.font = .boldSystemFont(ofSize: 50)
-            controllers[i].view.addSubview(messageLabel)
-            
-            let view = UIImageView(frame: CGRect(x: 10, y: 50 , width: view.frame.width - 20 , height:  view.frame.width - 20 ))
-            view.image = UIImage(named: onboardingImages[i])
-            controllers[i].view.addSubview(view)
-        }
-        
-        fillSeatGender()
-        
         let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch")
         if !isFirstLaunch {
             createCoreData()
+        }
+        
+        configureOnboardingView()
+        getCoreData()
+        configureView()
+        
+        for i in 0...(voyageClass?.count ?? 1) - 1 {
+            print("initial \(voyageClass![i].initialPoint)  finish \(voyageClass![i].finishPoint) date \(voyageClass![i].voyageDate.day)-\(voyageClass![i].voyageDate.month) : \(voyageClass![i].voyageDate.hour.hour) id \(voyageClass![i].busID)")
+//            for j in 0...(voyageClass?[i].seatsStatus.count)! - 1 {
+//                print("\(voyageClass![i].seatsStatus[j].seatNumber) \(voyageClass![i].seatsStatus[j].gender)")
+//            }
+        }
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch")
+        if !isFirstLaunch {
+            self.createOnboardingVC()
             UserDefaults.standard.set(true, forKey: "isFirstLaunch")
         }
         
-        getCoreData()
-        createInitialPoint()
-        createFinalPoint()
-        createDatePoint()
-        
-        //  temp print
-        if let voyageClass, voyageClass.count > 0 {
-            for i in 0...voyageClass.count - 1 {
-                print("\(i). inci voyageclass elemanlari")
-                print("initialPoint: \(voyageClass[i].initialPoint)")
-                print("finalPoint: \(voyageClass[i].finishPoint)")
-                print("UUID si: \(voyageClass[i].busID)")
-                print("initialDateYear: \(voyageClass[i].voyageDate.year)")
-                print("initialDateMonth: \(voyageClass[i].voyageDate.month)")
-                print("initialDateDay: \(voyageClass[i].voyageDate.day)")
-                print("initialDate Hour: \(voyageClass[i].voyageDate.hour.hour)")
-                print("initialDate Minute: \(voyageClass[i].voyageDate.hour.minute)")
-                for j in 0...(voyageClass[i].seatsStatus.count) - 1 {
-                    print("seatNumber \(voyageClass[i].seatsStatus[j].seatNumber), seatGender: \(voyageClass[i].seatsStatus[j].gender)")
+    }
     
-                }
+    func makeAlert(title: String, message: String ) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let button = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
+        alert.addAction(button)
+        present(alert, animated: true)
+    }
+    
+    @IBAction func chooseButtonTapped(_ sender: UIButton) {
+        guard let busID else {
+            makeAlert(title: "Missing Info", message:  "Please select from, to and date points")
+            return
+        }
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let navController = storyboard.instantiateViewController(withIdentifier: "firstNavigationController") as! UINavigationController
+        let viewController = storyboard.instantiateViewController(withIdentifier: "busSeatBoard") as! ViewController
+        delegate = viewController
+        print("data gönderildi")
+        print(busID)
+        delegate?.sendMessage(ID: busID)
+        navController.modalPresentationStyle = .overFullScreen
+        present(navController, animated: true, completion: nil)
+    }
+    
+    
+}
+
+// MARK: HELPERS FOR DATA CREATING
+
+extension MainViewController {
+    
+    final func fillMissingSeatEmpty() {
+        for element in 0...voyagesSeatArray.count - 1 {
+            guard let definedSeat = voyagesSeatArray[element].map({$0[0]}) as? [Int] else {return}
+            let seatNumbers = Array(1...45)
+            seatNumbers.forEach { seatNumber in
+                guard !definedSeat.contains(seatNumber) else {return}
+                voyagesSeatArray[element].append([seatNumber,Gender.empty.toString()])
+                
             }
         }
         
+    }
     
-   
-     
+    func findUUIDForSelection() {
+        if let filteredRoutes = voyageClass?.filter({
+            $0.initialPoint == selectedInitialPoint
+            && $0.finishPoint == selectedFinalPoint
+            && "\($0.voyageDate.day.twoDigit())-\($0.voyageDate.month.twoDigit())-\($0.voyageDate.year) \($0.voyageDate.hour.hour.twoDigit()):\($0.voyageDate.hour.minute.twoDigit())" == selectedDatePoint
+        }),
+           !(filteredRoutes.isEmpty) {
+            let voyageID = filteredRoutes.map { $0.busID}
+            busID = voyageID.first
+            print(busID)
+        }
+    }
+    
+    
+    func createPickersFullListPoints() {
+        
         fromPicker.delegate = self
         fromPicker.dataSource = self
         toPicker.delegate = self
@@ -129,122 +155,38 @@ class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         toPicker.isUserInteractionEnabled = false
         datePicker.isUserInteractionEnabled = false
         
-        chooseButton.addTarget(self, action: #selector(chooseButtonTapped), for: .touchUpInside)
-      
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(chooseButtonTapped))
-        busImageView.isUserInteractionEnabled = true
-        busImageView.addGestureRecognizer(tapGesture)
-        
+        createAllInitialPoint()
+        createAllFinalPoint()
+        createAllDatePoint()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunchOnboarding")
-        if !isFirstLaunch {
-            self.onboardingVC()
-            UserDefaults.standard.set(true, forKey: "isFirstLaunchOnboarding")
-        }
-      
-    }
-
-    
-    func onboardingVC() {
-        guard let first = controllers.first else {return}
-        let vc = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-        vc.modalPresentationStyle = .fullScreen
-        vc.delegate = self
-        vc.dataSource = self
-        
-        pageControl.numberOfPages = controllers.count
-        pageControl.currentPage = 0
-        pageControl.pageIndicatorTintColor = .gray
-        pageControl.currentPageIndicatorTintColor = .black
-        pageControl.translatesAutoresizingMaskIntoConstraints = false
-        vc.view.addSubview(pageControl)
-        NSLayoutConstraint.activate([
-               pageControl.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor),
-               pageControl.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: -50)
-           ])
-        
-        vc.setViewControllers([first], direction: .forward, animated: true)
-        present(vc, animated: true)
-    }
-    
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let index = controllers.firstIndex(of: viewController), index > 0 else {return nil}
-        let previous = index - 1
-        return controllers[previous]
-    }
-    
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let index = controllers.firstIndex(of: viewController), index < controllers.count - 1 else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.dismiss(animated: true, completion: nil)
+    func createAllInitialPoint() {
+        if let count = voyageClass?.count {
+            for i in 0...count - 1 {
+                if let initial = voyageClass?[i].initialPoint {
+                    initialPointSet.insert(initial)
+                    initialPointArray = initialPointSet.sorted()
+                    
+                }
             }
-            return nil}
-        let next = index + 1
-        return controllers[next]
-    }
-    
-    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        guard completed else { return }
-        guard let currentViewController = pageViewController.viewControllers?.first,
-              let currentIndex = controllers.firstIndex(of: currentViewController) else { return }
-        pageControl.currentPage = currentIndex
-    }
-    
-    
-    @IBAction func chooseButtonTapped(_ sender: UIButton) {
-        guard let busID else {
-            let alert = UIAlertController(title: "Missing Info", message: "Please select from, to and date points", preferredStyle: .alert)
-            let button = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
-            alert.addAction(button)
-            present(alert, animated: true)
-            return
         }
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let navController = storyboard.instantiateViewController(withIdentifier: "firstNavigationController") as! UINavigationController
-        let viewController = storyboard.instantiateViewController(withIdentifier: "busSeatBoard") as! ViewController
-        delegate = viewController
-        delegate?.sendMessage(ID: busID)
-        navController.modalPresentationStyle = .overFullScreen
-        present(navController, animated: true, completion: nil)
+        
     }
     
-    /*
-     @IBAction func chooseButtonTapped(_ sender: UIButton) {
-         guard let busID else {
-             let alert = UIAlertController(title: "Missing Info", message: "Please select from, to and date points", preferredStyle: .alert)
-             let button = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
-             alert.addAction(button)
-             present(alert, animated: true)
-             return
-         }
-         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-         let viewController = storyboard.instantiateViewController(withIdentifier: "busSeatBoard") as! ViewController
-         delegate = viewController
-         delegate?.sendMessage(ID: busID)
-         viewController.modalPresentationStyle = .overFullScreen
-         present(viewController, animated: true, completion: nil)
-       }
-     */
-    
-    func findUUID() {
-        if let filteredRoutes = voyageClass?.filter({
-                $0.initialPoint == selectedInitialPoint
-                && $0.finishPoint == selectedFinalPoint
-                && "\($0.voyageDate.day.twoDigit())-\($0.voyageDate.month.twoDigit())-\($0.voyageDate.year) \($0.voyageDate.hour.hour.twoDigit()):\($0.voyageDate.hour.minute.twoDigit())" == selectedDatePoint
-            }),
-           !(filteredRoutes.isEmpty) {
-            let voyageID = filteredRoutes.map { $0.busID}
-            busID = voyageID.first
-      
+    func createAllFinalPoint() {
+        if let count = voyageClass?.count {
+            for i in 0...count - 1 {
+                if let final = voyageClass?[i].finishPoint {
+                    finalPointSet.insert(final)
+                    finalPointArray = finalPointSet.sorted()
+                    
+                }
+            }
         }
     }
     
     
-    func createDatePoint() {
+    func createAllDatePoint() {
         if let count = voyageClass?.count {
             for i in 0...count - 1 {
                 if let date = voyageClass?[i].voyageDate {
@@ -268,32 +210,6 @@ class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         
     }
     
-    
-    func createInitialPoint() {
-        if let count = voyageClass?.count {
-            for i in 0...count - 1 {
-                if let initial = voyageClass?[i].initialPoint {
-                    initialPointSet.insert(initial)
-                    initialPointArray = initialPointSet.sorted()
-                    
-                }
-            }
-        }
-        
-    }
-    
-    func createFinalPoint() {
-        if let count = voyageClass?.count {
-            for i in 0...count - 1 {
-                if let final = voyageClass?[i].finishPoint {
-                    finalPointSet.insert(final)
-                    finalPointArray = initialPointSet.sorted()
-                    
-                }
-            }
-        }
-    }
-    
     func updateFinalPicker() {
         guard let selectedInitialPoint = selectedInitialPoint else {return}
         if let filteredRoutes = voyageClass?.filter({ $0.initialPoint == selectedInitialPoint }) {
@@ -304,12 +220,12 @@ class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
                 finalPointArray = afterSelectionSet.sorted()
             }
         }
-      
+        toPicker.reloadAllComponents()
     }
     
     func updateDatePicker() {
         guard let selectedInitialPoint,
-             let selectedFinalPoint else {return}
+              let selectedFinalPoint else {return}
         if let filteredRoutes = voyageClass?.filter({ $0.initialPoint == selectedInitialPoint && $0.finishPoint == selectedFinalPoint}) {
             if !(filteredRoutes.isEmpty) {
                 let voyageDate = filteredRoutes.map { $0.voyageDate }
@@ -330,22 +246,13 @@ class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
                 }
             }
         }
+        datePicker.reloadAllComponents()
     }
     
     
-    final func fillSeatGender() {
-        for element in 0...voyagesSeatArray.count - 1 {
-            guard let definedSeat = voyagesSeatArray[element].map({$0[0]}) as? [Int] else {return}
-            let seatNumbers = Array(1...45)
-            seatNumbers.forEach { seatNumber in
-                guard !definedSeat.contains(seatNumber) else {return}
-                voyagesSeatArray[element].append([seatNumber,Gender.empty.toString()])
-                
-            }
-        }
-        
-    }
 }
+
+// MARK: HELPERS FOR PICKERS
 
 extension MainViewController {
     
@@ -364,31 +271,30 @@ extension MainViewController {
         return 0
     }
     
-   
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-
+        
         guard selectedInitialPoint != nil else {
-            if pickerView == fromPicker {
-                if initialPointArray[row] == initialPointArray[0] {
-                    return "Please select"
-                }
-            }
+            selectedInitialPoint = initialPointArray[0]
+            updateFinalPicker()
+            selectedFinalPoint = finalPointArray[0]
+            updateDatePicker()
+            selectedDatePoint = datePointArray[0]
+            findUUIDForSelection()
             return nil
+            
         }
         toPicker.isUserInteractionEnabled = true
         datePicker.isUserInteractionEnabled = true
-            if pickerView == fromPicker {
-                //            updateFinalPicker()
-                return initialPointArray[row]
-            } else if pickerView == toPicker {
-                //            updateInitialPicker()
-                return finalPointArray[row]
-            } else if pickerView == datePicker {
-                return datePointArray[row]
-            } else {
-                return nil
-            }
+        if pickerView == fromPicker {
+            return initialPointArray[row]
+        } else if pickerView == toPicker {
+            return finalPointArray[row]
+        } else if pickerView == datePicker {
+            return datePointArray[row]
+        } else {
+            return nil
+        }
     }
     
     
@@ -399,21 +305,17 @@ extension MainViewController {
             selectedFinalPoint = finalPointArray[0]
             updateDatePicker()
             selectedDatePoint = datePointArray[0]
-            fromPicker.reloadAllComponents()
-            toPicker.reloadAllComponents()
-            datePicker.reloadAllComponents()
-    
         } else if pickerView == toPicker {
             selectedFinalPoint = finalPointArray[row]
             updateDatePicker()
-            fromPicker.reloadAllComponents()
-            datePicker.reloadAllComponents()
-       
+            selectedDatePoint = datePointArray[0]
         } else if pickerView == datePicker {
             selectedDatePoint = datePointArray[row]
         }
-       
-        findUUID()
+        print(selectedInitialPoint)
+        print(selectedFinalPoint)
+        print(selectedDatePoint)
+        findUUIDForSelection()
     }
     
 }
@@ -421,6 +323,7 @@ extension MainViewController {
 extension MainViewController {
     // creating coredata with predefined array
     func createCoreData() {
+        fillMissingSeatEmpty()
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {return}
         let context = appDelegate.persistentContainer.viewContext
         
@@ -456,11 +359,9 @@ extension MainViewController {
         }
     }
     
-    
-
     // mapping data from coredata to class
     func getCoreData() {
-        //        busInitial.removeAll(keepingCapacity: false)
+  
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {return}
         let context = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "BusStatus")
@@ -511,8 +412,8 @@ extension MainViewController {
                         let voyage = Voyage(busID: UUID, initialPoint: initial, finishPoint: final, seatsStatus: seatsSeries, voyageDate: voyageD)
                         voyageClass?.append(voyage)
                     }
-                }
-                //self.collectionView.reloadData()
+                }     
+                createPickersFullListPoints()
             } else {
                 print("data yok")
             }
@@ -521,11 +422,106 @@ extension MainViewController {
             print("data alınamadı")
         }
     }
-    
 }
+
+
+
+
 
 extension Int {
     func twoDigit() -> String {
         String(format: "%02d", self)
     }
 }
+
+// MARK: HELPERS FOR PAGEVIEW CONTROLLER
+
+extension MainViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
+    
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        guard let index = controllers.firstIndex(of: viewController), index > 0 else {return nil}
+        let previous = index - 1
+        return controllers[previous]
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        guard let index = controllers.firstIndex(of: viewController), index < controllers.count - 1 else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.dismiss(animated: true, completion: nil)
+            }
+            return nil}
+        let next = index + 1
+        return controllers[next]
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        guard completed else { return }
+        guard let currentViewController = pageViewController.viewControllers?.first,
+              let currentIndex = controllers.firstIndex(of: currentViewController) else { return }
+        pageControl.currentPage = currentIndex
+    }
+    
+    func createOnboardingVC() {
+        guard let first = controllers.first else {return}
+        let vc = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        vc.modalPresentationStyle = .fullScreen
+        vc.delegate = self
+        vc.dataSource = self
+        
+        pageControl.numberOfPages = controllers.count
+        pageControl.currentPage = 0
+        pageControl.pageIndicatorTintColor = .gray
+        pageControl.currentPageIndicatorTintColor = .black
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
+        vc.view.addSubview(pageControl)
+        NSLayoutConstraint.activate([
+            pageControl.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor),
+            pageControl.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: -50)
+        ])
+        
+        vc.setViewControllers([first], direction: .forward, animated: true)
+        present(vc, animated: true)
+    }
+    
+}
+
+// MARK: HELPERS FOR VIEW
+
+extension MainViewController {
+    
+    private func configureView() {
+        chooseButton.addTarget(self, action: #selector(chooseButtonTapped), for: .touchUpInside)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(chooseButtonTapped))
+        busImageView.isUserInteractionEnabled = true
+        busImageView.addGestureRecognizer(tapGesture)
+        
+    }
+    private func configureOnboardingView() {
+        let vc1 = UIViewController()
+        vc1.view.backgroundColor = .white
+        controllers.append(vc1)
+        let vc2 = UIViewController()
+        vc2.view.backgroundColor = .white
+        controllers.append(vc2)
+        for i in 0...controllers.count - 1 {
+            let messageLabel = UILabel(frame: CGRect(x: 10 , y: view.frame.width + 70 , width: view.frame.width - 20 , height: 100))
+            messageLabel.text = onboardingMessages[i]
+            messageLabel.textColor = .black
+            messageLabel.numberOfLines = 0
+            messageLabel.textAlignment = .center
+            messageLabel.font = .boldSystemFont(ofSize: 50)
+            controllers[i].view.addSubview(messageLabel)
+            
+            let view = UIImageView(frame: CGRect(x: 10, y: 50 , width: view.frame.width - 20 , height:  view.frame.width - 20 ))
+            view.image = UIImage(named: onboardingImages[i])
+            controllers[i].view.addSubview(view)
+        }
+    }
+}
+
+
+protocol MessageDelegate {
+    func sendMessage(ID: UUID)
+}
+
