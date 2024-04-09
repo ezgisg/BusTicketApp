@@ -82,12 +82,8 @@ class ViewController: UIViewController, UICollectionViewDelegate {
         backButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         backButton.imageView?.contentMode = .scaleAspectFill // Fill the entire button with the image
-
-        // Create a UIBarButtonItem with the custom back button
-        let backBarButtonItem = UIBarButtonItem(customView: backButton)
-        
-        // Set the left bar button item to the custom back button
-        navigationItem.rightBarButtonItem = backBarButtonItem
+        backButton.frame = CGRect(x: view.frame.width - 30 , y: 50 , width: 30, height: 30)
+        view.addSubview(backButton)
       
         getCoreData()
         

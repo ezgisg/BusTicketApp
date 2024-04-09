@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		ABA7028A2BBED8DE00F33992 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABA702892BBED8DE00F33992 /* MainViewController.swift */; };
+		ABABE15D2BC554730081B72A /* Int + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABABE15C2BC554730081B72A /* Int + Extension.swift */; };
 		ABCEC0022BB540B00061C9CD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCEC0012BB540B00061C9CD /* AppDelegate.swift */; };
 		ABCEC0042BB540B00061C9CD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCEC0032BB540B00061C9CD /* SceneDelegate.swift */; };
 		ABCEC0062BB540B00061C9CD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCEC0052BB540B00061C9CD /* ViewController.swift */; };
@@ -27,6 +28,7 @@
 
 /* Begin PBXFileReference section */
 		ABA702892BBED8DE00F33992 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		ABABE15C2BC554730081B72A /* Int + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int + Extension.swift"; sourceTree = "<group>"; };
 		ABCEBFFE2BB540B00061C9CD /* busTicketApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = busTicketApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABCEC0012BB540B00061C9CD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ABCEC0032BB540B00061C9CD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -141,6 +143,7 @@
 			isa = PBXGroup;
 			children = (
 				ABCEC02C2BB56A560061C9CD /* Bundle + Extension.swift */,
+				ABABE15C2BC554730081B72A /* Int + Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -225,6 +228,7 @@
 				ABCEC0022BB540B00061C9CD /* AppDelegate.swift in Sources */,
 				ABCEC02D2BB56A560061C9CD /* Bundle + Extension.swift in Sources */,
 				ABCEC0282BB567F80061C9CD /* Section.swift in Sources */,
+				ABABE15D2BC554730081B72A /* Int + Extension.swift in Sources */,
 				ABCEC01C2BB545F00061C9CD /* Classes.swift in Sources */,
 				ABCEC0252BB5675F0061C9CD /* seatProtocol.swift in Sources */,
 				ABCEC02A2BB568030061C9CD /* Seats.swift in Sources */,
