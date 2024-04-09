@@ -33,7 +33,9 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     var voyageClass : [Voyage]? = []
     var selectedRouteID : UUID?
     var tripNumber = Int()
+    // infolabel tempseats2 ye göre düzenlenip tempseats de silinecek
     var tempSeats = Set<String>()
+    var tempSeats2 = selectedSeats(selectedSeats: [])
     
     let busRow: CGFloat = 15
     let busColumn: CGFloat = 5
@@ -72,18 +74,21 @@ class ViewController: UIViewController, UICollectionViewDelegate {
     //    MARK: DIDLOAD
     
     override func viewDidLoad() {
-      
-        let backButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(backButtonTapped))
-        navigationItem.rightBarButtonItem = backButton
-        navigationItem.hidesBackButton = true
         super.viewDidLoad()
-    
-//        fillSeatGender()
-//        let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch")
-//        if !isFirstLaunch {
-//            createCoreData()
-//            UserDefaults.standard.set(true, forKey: "isFirstLaunch")
-//        }
+        
+        // TODO: - Buradaki image'ı düzenle
+        // Create a custom back button
+        let backButton = UIButton(type: .custom)
+        backButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        backButton.imageView?.contentMode = .scaleAspectFill // Fill the entire button with the image
+
+        // Create a UIBarButtonItem with the custom back button
+        let backBarButtonItem = UIBarButtonItem(customView: backButton)
+        
+        // Set the left bar button item to the custom back button
+        navigationItem.rightBarButtonItem = backBarButtonItem
+      
         getCoreData()
         
         // temp variable , for selecting route
@@ -91,24 +96,7 @@ class ViewController: UIViewController, UICollectionViewDelegate {
             tripNumber = findingRouteIndex
         }
   
-        //  temp print
-//        if let voyageClass, voyageClass.count > 0 {
-//            for i in 0...voyageClass.count - 1 {
-//                print("\(i). inci voyageclass elemanlari")
-//                print("initialPoint: \(voyageClass[i].initialPoint)")
-//                print("finalPoint: \(voyageClass[i].finishPoint)")
-//                print("UUID si: \(voyageClass[i].busID)")
-//                print("initialDateYear: \(voyageClass[i].voyageDate.year)")
-//                print("initialDateMonth: \(voyageClass[i].voyageDate.month)")
-//                print("initialDateDay: \(voyageClass[i].voyageDate.day)")
-//                print("initialDate Hour: \(voyageClass[i].voyageDate.hour.hour)")
-//                print("initialDate Minute: \(voyageClass[i].voyageDate.hour.minute)")
-//                for j in 0...(voyageClass[i].seatsStatus.count) - 1 {
-//                    print("seatNumber \(voyageClass[i].seatsStatus[j].seatNumber), seatGender: \(voyageClass[i].seatsStatus[j].gender)")
-//    
-//                }
-//            }
-//        }
+ 
         
         //  view settings
         let collectionViewHeight = view.bounds.height * screenHeightRatio
@@ -157,7 +145,8 @@ class ViewController: UIViewController, UICollectionViewDelegate {
         collectionView.register(SingleCell.self, forCellWithReuseIdentifier: SingleCell.reuseIdentifier)
         createDataSource()
         reloadData()
-        
+ 
+    
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -295,14 +284,15 @@ class ViewController: UIViewController, UICollectionViewDelegate {
       
         if let image = cell?.seatView.image , image == UIImage(named: "blueSelected") || image == UIImage(named: "pinkSelected")  {
             cell?.seatView.image = UIImage(named: "whiteseat")
+            
+            tempSeats2.selectedSeats.removeAll { $0.seatNumber == Int(cell?.seatNumLabel.text ?? "") ?? 0 }
+
             self.tempSeats.remove(cell?.seatNumLabel.text ?? "")
             self.infoLabel.text = "Selected Seats: \(self.tempSeats) "
            
         } else {
-            let genderAlert = UIAlertController(title: "Gender Warning", message: "You cant select opposite gender", preferredStyle: .alert)
-            let okButton = UIAlertAction(title: "Ok", style: .cancel)
-            genderAlert.addAction(okButton)
-            
+
+
             let section = sections[indexPath.section]
             let nextSeatNumber = section.seats[indexPath.item].nextSeatNumber
             let nextToSelectedSeat = self.voyageClass?[tripNumber].seatsStatus.first(where: { $0.seatNumber == nextSeatNumber })
@@ -311,9 +301,16 @@ class ViewController: UIViewController, UICollectionViewDelegate {
             let alert = UIAlertController(title: "Select Gender", message: "Please select passenger gender:", preferredStyle: .alert)
             let buttonM = UIAlertAction(title: Gender.male.toString() , style: .default, handler: { _ in
                 if (nextToSelectedSeat?.gender.toString() ?? "Empty") == Gender.female.toString() {
-                    self.present(genderAlert, animated: true, completion: nil)
+                    self.makeAlert(title: "Gender Warning", message: "You cant select opposite gender")
+                } else if (self.tempSeats2.isSeatCountGreaterThanFive()) {
+                    self.makeAlert(title: "Seat Count Warning", message: "You can not choose seat more than 5")
+             
                 } else {
                     cell?.seatView.image = UIImage(named: "blueSelected")
+                    
+                    let newSeat = BusSeatsDetail(gender: .male, seatNumber: Int(cell?.seatNumLabel.text ?? "") ?? 0)
+                    self.tempSeats2.selectedSeats.append(newSeat)
+        
                     self.tempSeats.insert(cell?.seatNumLabel.text ?? "")
                     self.infoLabel.text = "Selected Seats: \(self.tempSeats) "
                 }
@@ -322,13 +319,19 @@ class ViewController: UIViewController, UICollectionViewDelegate {
             let buttonF = UIAlertAction(title: Gender.female.toString() , style: .default, handler: { [self] _ in
             
                 if (nextToSelectedSeat?.gender.toString() ?? "Empty") == Gender.male.toString() {
-                    self.present(genderAlert, animated: true, completion: nil)
+                    makeAlert(title: "Gender Warning", message: "You cant select opposite gender")
                    
+                } else if (self.tempSeats2.isSeatCountGreaterThanFive()) {
+                    self.makeAlert(title: "Seat Count Warning", message: "You can not choose seat more than 5")
+            
                 } else {
                     cell?.seatView.image = UIImage(named: "pinkSelected")
+                    
+                    let newSeat = BusSeatsDetail(gender: .male, seatNumber: Int(cell?.seatNumLabel.text ?? "") ?? 0)
+                    self.tempSeats2.selectedSeats.append(newSeat)
+                    
                     self.tempSeats.insert(cell?.seatNumLabel.text ?? "")
                     self.infoLabel.text = "Selected Seats: \(self.tempSeats) "
-                
                 }
             })
             alert.addAction(buttonF)
@@ -418,7 +421,15 @@ private extension ViewController {
         }
     }
     
+    func makeAlert(title: String, message: String ) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let button = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
+        alert.addAction(button)
+        present(alert, animated: true)
+    }
 }
+
+
 
 
 //    MARK: COREDATA FUNCS

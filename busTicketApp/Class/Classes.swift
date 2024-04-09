@@ -51,7 +51,7 @@ class Passengers {
     }
     
     func printTicket() {
-        for i in 1 ... seatNum {
+        for _ in 1 ... seatNum {
 //            print("passenger info: \(passenger[i].id)-\(passenger[i].surname)-\(passenger[i].name) - direction: from \(fromtoDirection.initialPoint) to \(fromtoDirection.finishPoint) - seat num: \(seatArray[i]) - date: \(hour.minute) : \(hour.hour) \(date.day)/\(date.month)/\(date.year)")
         }
     }
@@ -114,6 +114,9 @@ class selectedSeats {
         self.selectedSeats = selectedSeats
     }
     
+    func isSeatCountGreaterThanFive() -> Bool {
+        return selectedSeats.count > 4
+    }
 }
 
 class BusSeatsDetail {
@@ -135,6 +138,8 @@ class BusSeatsDetail {
             return (UIImage(named: "whiteseat") ?? UIImage(), true)
         }
     }
+    
+   
     
 }
 

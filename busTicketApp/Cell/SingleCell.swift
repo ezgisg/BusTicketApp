@@ -45,7 +45,7 @@ class SingleCell: UICollectionViewCell, seatProtocol {
 
         let seatNumberText = String(seats?.seatNumber ?? 0)
         seatNumLabel.text = seatNumberText
-     
+        seatView.image = UIImage(named: "whiteseat")
         
     }
 }

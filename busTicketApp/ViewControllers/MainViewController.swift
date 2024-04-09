@@ -13,7 +13,14 @@ protocol MessageDelegate {
 }
 
 
-class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UIPageViewControllerDelegate, UIPageViewControllerDataSource {
+
+    
+    @IBOutlet weak var busImageView: UIImageView!
+    let onboardingMessages = ["Welcome!", "Let's Start"]
+    let onboardingImages = ["bus", "busstop"]
+    var controllers = [UIViewController]()
+    let pageControl = UIPageControl()
     
     var delegate : MessageDelegate?
     
@@ -54,6 +61,29 @@ class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     override func viewDidLoad() {
         super.viewDidLoad()
         
+   
+        
+        let vc1 = UIViewController()
+        vc1.view.backgroundColor = .white
+        controllers.append(vc1)
+        
+        let vc2 = UIViewController()
+        vc2.view.backgroundColor = .white
+        controllers.append(vc2)
+        
+        for i in 0...controllers.count - 1 {
+            let messageLabel = UILabel(frame: CGRect(x: 10 , y: view.frame.width + 70 , width: view.frame.width - 20 , height: 100))
+            messageLabel.text = onboardingMessages[i]
+            messageLabel.textColor = .black
+            messageLabel.numberOfLines = 0
+            messageLabel.textAlignment = .center
+            messageLabel.font = .boldSystemFont(ofSize: 50)
+            controllers[i].view.addSubview(messageLabel)
+            
+            let view = UIImageView(frame: CGRect(x: 10, y: 50 , width: view.frame.width - 20 , height:  view.frame.width - 20 ))
+            view.image = UIImage(named: onboardingImages[i])
+            controllers[i].view.addSubview(view)
+        }
         
         fillSeatGender()
         
@@ -62,6 +92,7 @@ class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
             createCoreData()
             UserDefaults.standard.set(true, forKey: "isFirstLaunch")
         }
+        
         getCoreData()
         createInitialPoint()
         createFinalPoint()
@@ -99,22 +130,105 @@ class MainViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         datePicker.isUserInteractionEnabled = false
         
         chooseButton.addTarget(self, action: #selector(chooseButtonTapped), for: .touchUpInside)
+      
         
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(chooseButtonTapped))
+        busImageView.isUserInteractionEnabled = true
+        busImageView.addGestureRecognizer(tapGesture)
         
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunchOnboarding")
+        if !isFirstLaunch {
+            self.onboardingVC()
+            UserDefaults.standard.set(true, forKey: "isFirstLaunchOnboarding")
+        }
+      
+    }
 
+    
+    func onboardingVC() {
+        guard let first = controllers.first else {return}
+        let vc = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        vc.modalPresentationStyle = .fullScreen
+        vc.delegate = self
+        vc.dataSource = self
+        
+        pageControl.numberOfPages = controllers.count
+        pageControl.currentPage = 0
+        pageControl.pageIndicatorTintColor = .gray
+        pageControl.currentPageIndicatorTintColor = .black
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
+        vc.view.addSubview(pageControl)
+        NSLayoutConstraint.activate([
+               pageControl.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor),
+               pageControl.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: -50)
+           ])
+        
+        vc.setViewControllers([first], direction: .forward, animated: true)
+        present(vc, animated: true)
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        guard let index = controllers.firstIndex(of: viewController), index > 0 else {return nil}
+        let previous = index - 1
+        return controllers[previous]
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        guard let index = controllers.firstIndex(of: viewController), index < controllers.count - 1 else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.dismiss(animated: true, completion: nil)
+            }
+            return nil}
+        let next = index + 1
+        return controllers[next]
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        guard completed else { return }
+        guard let currentViewController = pageViewController.viewControllers?.first,
+              let currentIndex = controllers.firstIndex(of: currentViewController) else { return }
+        pageControl.currentPage = currentIndex
+    }
+    
+    
     @IBAction func chooseButtonTapped(_ sender: UIButton) {
-        guard let busID else {return}
+        guard let busID else {
+            let alert = UIAlertController(title: "Missing Info", message: "Please select from, to and date points", preferredStyle: .alert)
+            let button = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
+            alert.addAction(button)
+            present(alert, animated: true)
+            return
+        }
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let navController = storyboard.instantiateViewController(withIdentifier: "firstNavigationController") as! UINavigationController
         let viewController = storyboard.instantiateViewController(withIdentifier: "busSeatBoard") as! ViewController
         delegate = viewController
         delegate?.sendMessage(ID: busID)
-        navController.pushViewController(viewController, animated: true)
         navController.modalPresentationStyle = .overFullScreen
         present(navController, animated: true, completion: nil)
-
-      }
+    }
+    
+    /*
+     @IBAction func chooseButtonTapped(_ sender: UIButton) {
+         guard let busID else {
+             let alert = UIAlertController(title: "Missing Info", message: "Please select from, to and date points", preferredStyle: .alert)
+             let button = UIAlertAction(title: "Ok", style: .cancel, handler: nil)
+             alert.addAction(button)
+             present(alert, animated: true)
+             return
+         }
+         let storyboard = UIStoryboard(name: "Main", bundle: nil)
+         let viewController = storyboard.instantiateViewController(withIdentifier: "busSeatBoard") as! ViewController
+         delegate = viewController
+         delegate?.sendMessage(ID: busID)
+         viewController.modalPresentationStyle = .overFullScreen
+         present(viewController, animated: true, completion: nil)
+       }
+     */
     
     func findUUID() {
         if let filteredRoutes = voyageClass?.filter({
