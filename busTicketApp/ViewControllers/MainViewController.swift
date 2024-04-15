@@ -55,7 +55,7 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
        
-        let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch")
+        let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch.")
         if !isFirstLaunch {
             createCoreData()
         }
@@ -67,10 +67,10 @@ class MainViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch")
+        let isFirstLaunch = UserDefaults.standard.bool(forKey: "isFirstLaunch.")
         if !isFirstLaunch {
             self.createOnboardingVC()
-            UserDefaults.standard.set(true, forKey: "isFirstLaunch")
+            UserDefaults.standard.set(true, forKey: "isFirstLaunch.")
         }
     }
     
@@ -412,10 +412,8 @@ extension MainViewController: UIPageViewControllerDelegate, UIPageViewController
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let index = controllers.firstIndex(of: viewController), index < controllers.count - 1 else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.dismiss(animated: true, completion: nil)
-            }
+        guard let index = controllers.firstIndex(of: viewController),
+              index < controllers.count - 1 else {
             return nil
         }
         let next = index + 1
@@ -464,6 +462,33 @@ private extension MainViewController {
         busImageView.addGestureRecognizer(tapGesture)
         
     }
+    
+    /// Checks controller in progress count value and adds a `dismiss` button if it is last.
+    /// - Parameter count: Int value for the contoller in  UIPageViewController's order.
+    final func checkAndAddDismissButton(for count: Int) {
+        guard count == controllers.count - 1,
+              let lastController = controllers.last else { return }
+        
+        let dismissButton = UIButton(frame: CGRect(x: 0, y: 0, width: 80, height: 20))
+        dismissButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        dismissButton.setTitle("Skip", for: .normal)
+        dismissButton.titleLabel?.font = .boldSystemFont(ofSize: 20)
+        dismissButton.setTitleColor(.systemBlue, for: .normal)
+        
+        dismissButton.addTarget(self, action: #selector(didTapDismissButton), for: .touchUpInside)
+        
+        controllers[count].view.addSubview(dismissButton)
+        NSLayoutConstraint.activate([
+            dismissButton.trailingAnchor.constraint(equalTo: lastController.view.trailingAnchor, constant: -20),
+            dismissButton.bottomAnchor.constraint(equalTo: lastController.view.bottomAnchor, constant: -50)
+        ])
+    }
+    
+    @objc func didTapDismissButton() {
+        dismiss(animated: true, completion: nil)
+    }
+    
     final func configureOnboardingView() {
         let vc1 = UIViewController()
         vc1.view.backgroundColor = .white
@@ -479,8 +504,9 @@ private extension MainViewController {
             messageLabel.textAlignment = .center
             messageLabel.font = .boldSystemFont(ofSize: 50)
             controllers[i].view.addSubview(messageLabel)
+            checkAndAddDismissButton(for: i)
             
-            let view = UIImageView(frame: CGRect(x: 10, y: 50 , width: view.frame.width - 20 , height:  view.frame.width - 20 ))
+            let view = UIImageView(frame: CGRect(x: 10, y: 80 , width: view.frame.width - 20 , height:  view.frame.width - 20 ))
             view.image = UIImage(named: onboardingImages[i])
             controllers[i].view.addSubview(view)
         }

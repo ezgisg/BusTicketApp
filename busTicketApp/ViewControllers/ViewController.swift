@@ -283,12 +283,26 @@ class ViewController: UIViewController, UICollectionViewDelegate {
         return cell
     }
     
+    /// Transforms cell's size to 0.8 scale witn 0.2 second.
+    /// - Parameter cell: SingleCell value for the seat cell.
+    final func makeClickAnimation(to cell: SingleCell?) {
+        guard let cell else { return }
+        let duration = 0.2
+        let scale = 0.8
+        UIView.animate(withDuration: duration, animations: {
+            cell.transform = CGAffineTransform(scaleX: scale, y: scale)
+        }) { _ in
+            UIView.animate(withDuration: duration) {
+                cell.transform = .identity
+            }
+        }
+    }
+    
     // selecting seats on collection view
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    
-        
         let cell = collectionView.cellForItem(at: indexPath) as? SingleCell
-      
+        makeClickAnimation(to: cell)
+        
         if let image = cell?.seatView.image , image == UIImage(named: "blueSelected") || image == UIImage(named: "pinkSelected")  {
             cell?.seatView.image = UIImage(named: "whiteseat")
             
